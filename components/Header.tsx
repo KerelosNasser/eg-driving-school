@@ -20,10 +20,10 @@ export default function Header() {
     <>
       {/* Main Header - Glassy Black iOS Style */}
       <header 
-        className={`w-full font-sans sticky top-0 z-50 transition-all duration-300 border-b border-white/10 ${
+        className={`w-full font-sans sticky top-0 z-50 transition-all duration-300 border-b border-white/10 bg-[#000000] ${
           isScrolled 
-            ? 'bg-black md:bg-black/70 backdrop-blur-xl shadow-lg py-3' 
-            : 'bg-black md:bg-black/80 backdrop-blur-md py-5'
+            ? 'md:bg-black/70 md:backdrop-blur-xl md:shadow-lg py-3' 
+            : 'md:bg-black/80 md:backdrop-blur-md py-5'
         }`}
       >
         <div className="container mx-auto px-4">
@@ -108,7 +108,7 @@ export default function Header() {
 
         {/* Mobile Menu Overlay */}
         <div 
-          className={`md:hidden fixed inset-0 bg-black z-10 transition-all duration-300 ease-in-out ${
+          className={`md:hidden fixed inset-0 bg-black/95 backdrop-blur-xl z-10 transition-all duration-300 ease-in-out ${
             isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
           }`}
           style={{ top: '0', paddingTop: '100px' }}
