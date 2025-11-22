@@ -4,7 +4,7 @@
  */
 
 import { getGoogleAuth } from '../lib/google/auth';
-import { db, storage } from '../lib/firebase/admin';
+import { adminDb as db, storage } from '../lib/firebase/admin';
 import { mapsService } from '../lib/services/maps.service';
 import { calendarService } from '../lib/services/calendar.service';
 

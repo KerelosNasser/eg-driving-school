@@ -1,4 +1,5 @@
-import { db } from '../firebase/admin';
+import { adminDb as db } from '../firebase/admin';
+import { WhereFilterOp } from 'firebase-admin/firestore';
 import 'server-only';
 
 export class FirestoreService {
@@ -45,7 +46,7 @@ export class FirestoreService {
   /**
    * Update a document
    */
-  async updateDocument(collectionPath: string, docId: string, data: Partial<any>) {
+  async updateDocument<T extends object>(collectionPath: string, docId: string, data: Partial<T>) {
     await db.collection(collectionPath).doc(docId).update({
       ...data,
       updatedAt: new Date().toISOString(),
@@ -65,8 +66,8 @@ export class FirestoreService {
   async query<T>(
     collectionPath: string, 
     field: string, 
-    operator: FirebaseFirestore.WhereFilterOp, 
-    value: any
+    operator: WhereFilterOp, 
+    value: string | number | boolean | null
   ): Promise<T[]> {
     const snapshot = await db.collection(collectionPath).where(field, operator, value).get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as T));

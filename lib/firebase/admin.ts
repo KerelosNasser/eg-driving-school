@@ -1,42 +1,39 @@
-import * as admin from 'firebase-admin';
-import 'server-only';
+import "server-only";
+import { getApps, initializeApp, cert, getApp, App } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
 
-interface ServiceAccountKey {
-  client_email: string;
-  private_key: string;
-  project_id: string;
-}
+const serviceAccount = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
-const initFirebaseAdmin = () => {
-  if (admin.apps.length > 0) {
-    return admin.app();
+let app: App;
+
+if (!getApps().length) {
+  if (!serviceAccount) {
+    throw new Error(
+      "GOOGLE_APPLICATION_CREDENTIALS environment variable is not set."
+    );
   }
-
-  const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
-
-  if (!credentialsJson) {
-    throw new Error('Missing GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable');
-  }
-
+   
   try {
-    const credentials = JSON.parse(credentialsJson) as ServiceAccountKey;
-
-    return admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: credentials.project_id,
-        clientEmail: credentials.client_email,
-        privateKey: credentials.private_key,
-      }),
-      projectId: credentials.project_id || process.env.FIREBASE_PROJECT_ID,
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+     // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const serviceAccountJson = require(serviceAccount.startsWith(".") ? `../../${serviceAccount}` : serviceAccount);
+    app = initializeApp({
+      credential: cert(serviceAccountJson),
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET, // Add storage bucket if needed
     });
   } catch (error) {
-    console.error('Error initializing Firebase Admin:', error);
-    throw new Error('Failed to initialize Firebase Admin');
+      console.error("Failed to load service account", error);
+      // Fallback or re-throw
+      throw error;
   }
-};
 
-const app = initFirebaseAdmin();
-export const db = app.firestore();
-export const storage = app.storage();
-export const auth = app.auth();
+} else {
+  app = getApp();
+}
+
+const adminAuth = getAuth(app);
+const adminDb = getFirestore(app);
+const storage = getStorage(app);
+
+export { adminAuth, adminDb, storage };

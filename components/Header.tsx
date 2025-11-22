@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Phone, Menu, X, ChevronDown } from 'lucide-react';
+import EditableText from './admin/EditableText';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -78,14 +79,17 @@ export default function Header() {
               </Link>
             </nav>
 
-            {/* Right Side (Phone & CTA) */}
             <div className="hidden md:flex items-center gap-6 z-20">
               <a 
                 href="tel:0431512095" 
                 className="flex items-center gap-2 text-white/90 hover:text-[var(--primary)] transition-colors text-sm font-medium"
               >
                 <Phone className="w-4 h-4" />
-                <span>0431 512 095</span>
+                <EditableText 
+                  section="header" 
+                  field="phoneNumber" 
+                  initialValue="0431 512 095" 
+                />
               </a>
               
               <a 
