@@ -21,10 +21,16 @@ import {
   Phone, 
   Smartphone, 
   FileText, 
-  AlertCircle 
+  AlertCircle,
+  MapPin,
+  Navigation
 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useLoadScript } from "@react-google-maps/api";
+import usePlacesAutocomplete, {
+  getGeocode,
+} from "use-places-autocomplete";
 
 // Add type definition for window.recaptchaVerifier
 declare global {
@@ -39,10 +45,30 @@ interface EnhancedAuthFormProps {
     phoneNumber: string;
     additionalPhone?: string;
     healthNote?: string;
+    address?: string;
   }) => void;
 }
 
-export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
+const libraries: ("places")[] = ["places"];
+
+export function EnhancedAuthForm(props: EnhancedAuthFormProps) {
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
+
+  if (!isLoaded) {
+    return (
+      <div className="w-full max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex justify-center items-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  return <AuthFormContent {...props} />;
+}
+
+function AuthFormContent({ onComplete }: EnhancedAuthFormProps) {
   // State
   const [isSignUp, setIsSignUp] = useState(true); // Default to Sign Up
   const [user, setUser] = useState<User | null>(null);
@@ -52,6 +78,7 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [additionalPhone, setAdditionalPhone] = useState("");
   const [healthNote, setHealthNote] = useState("");
+  const [address, setAddress] = useState("");
   
   // UI State
   const [loading, setLoading] = useState(false);
@@ -59,6 +86,27 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
   const [otpSent, setOtpSent] = useState(false);
   const [timer, setTimer] = useState(0);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(false);
+
+  // Places Autocomplete
+  const {
+    ready,
+    value,
+    suggestions: { status, data },
+    setValue,
+    clearSuggestions,
+  } = usePlacesAutocomplete({
+    requestOptions: {
+      /* Define search scope here */
+      componentRestrictions: { country: "au" }, // Limit to Australia
+    },
+    debounce: 300,
+  });
+
+  // Sync local address state with autocomplete value
+  useEffect(() => {
+    setAddress(value);
+  }, [value]);
 
   // Timer effect
   useEffect(() => {
@@ -88,7 +136,7 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
         console.error("Recaptcha init error:", e);
       }
     }
-  }, [otpSent]); // Re-run if otpSent changes to ensure container exists if we need to re-init
+  }, [otpSent]);
 
   // Google Sign In
   const handleGoogleSignIn = async () => {
@@ -116,10 +164,7 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
 
   // Phone Formatting & Validation
   const formatPhoneNumber = (value: string) => {
-    // Remove non-digits
     const digits = value.replace(/\D/g, "");
-    
-    // Format as 04XX XXX XXX
     if (digits.length <= 4) return digits;
     if (digits.length <= 7) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
     return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 10)}`;
@@ -150,7 +195,6 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
     try {
       if (!auth) throw new Error("Auth not initialized");
       
-      // Ensure recaptcha is ready
       if (!window.recaptchaVerifier) {
          window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
           size: "invisible",
@@ -164,7 +208,7 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
       const confirmationResult = await signInWithPhoneNumber(auth, formattedNumber, window.recaptchaVerifier);
       setVerificationId(confirmationResult);
       setOtpSent(true);
-      setTimer(60); // Start 60s timer
+      setTimer(60);
     } catch (err: unknown) {
       console.error("Error sending OTP:", err);
       if (err instanceof Error) {
@@ -190,13 +234,51 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
     try {
       await verificationId.confirm(otp);
       setIsPhoneVerified(true);
-      setOtpSent(false); // Hide OTP field, show success state
+      setOtpSent(false);
     } catch (err) {
       console.error("Error verifying OTP:", err);
       setError("Invalid verification code. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Address Handlers
+  const handleAddressSelect = async (description: string) => {
+    setValue(description, false);
+    clearSuggestions();
+    setAddress(description);
+  };
+
+  const handleCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setGeoLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const results = await getGeocode({ location: { lat: latitude, lng: longitude } });
+          if (results[0]) {
+            setValue(results[0].formatted_address, false);
+            setAddress(results[0].formatted_address);
+          }
+        } catch (error) {
+          console.error("Error getting location:", error);
+          setError("Failed to get current location.");
+        } finally {
+          setGeoLoading(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setError("Unable to retrieve your location.");
+        setGeoLoading(false);
+      }
+    );
   };
 
   // Submit Form
@@ -206,7 +288,8 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
         user,
         phoneNumber,
         additionalPhone: isSignUp ? additionalPhone : undefined,
-        healthNote: isSignUp ? healthNote : undefined
+        healthNote: isSignUp ? healthNote : undefined,
+        address: isSignUp ? address : undefined
       });
     }
   };
@@ -372,11 +455,62 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
         </div>
       </div>
 
-      {/* 3. Additional Phone (Optional) - Only for Sign Up */}
+      {/* 3. Address Field (Optional) - Only for Sign Up */}
       {isSignUp && (
         <div className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-150">
           <Label className="text-base font-semibold flex items-center gap-2 text-gray-700">
-            3. Alternative Contact <span className="text-xs font-normal text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
+            3. Address <span className="text-xs font-normal text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
+          </Label>
+          <div className="relative">
+            <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search your address..."
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              disabled={!ready}
+              className="pl-10 pr-12 h-11"
+            />
+            <div className="absolute right-1 top-1 bottom-1">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleCurrentLocation}
+                disabled={geoLoading || !ready}
+                className="h-full px-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                title="Use current location"
+              >
+                {geoLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Navigation className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
+            
+            {/* Autocomplete Suggestions */}
+            {status === "OK" && (
+              <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-lg max-h-60 overflow-auto animate-in fade-in slide-in-from-top-1">
+                {data.map(({ place_id, description }) => (
+                  <li
+                    key={place_id}
+                    onClick={() => handleAddressSelect(description)}
+                    className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700 transition-colors"
+                  >
+                    {description}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 4. Additional Phone (Optional) - Only for Sign Up */}
+      {isSignUp && (
+        <div className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-200">
+          <Label className="text-base font-semibold flex items-center gap-2 text-gray-700">
+            4. Alternative Contact <span className="text-xs font-normal text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
           </Label>
           <div className="relative">
             <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
@@ -394,11 +528,11 @@ export function EnhancedAuthForm({ onComplete }: EnhancedAuthFormProps) {
         </div>
       )}
 
-      {/* 4. Health Note (Optional) - Only for Sign Up */}
+      {/* 5. Health Note (Optional) - Only for Sign Up */}
       {isSignUp && (
-        <div className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-200">
+        <div className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-250">
           <Label className="text-base font-semibold flex items-center gap-2 text-gray-700">
-            4. Health Conditions <span className="text-xs font-normal text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
+            5. Health Conditions <span className="text-xs font-normal text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
           </Label>
           <div className="relative">
             <FileText className="absolute left-3 top-3 w-5 h-5 text-gray-400" />

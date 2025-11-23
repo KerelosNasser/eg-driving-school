@@ -6,7 +6,7 @@
   --foreground: #000000;
 
   /* Primary Colors - Yellow/Black Theme */
-  --primary: #FFD600;
+  --primary: #ffd600;
   --primary-foreground: #000000;
 
   /* Secondary/Muted Colors */
@@ -47,6 +47,7 @@
   h4,
   h5,
   h6 {
+    font-family: var(--font-outfit), sans-serif;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;

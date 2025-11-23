@@ -28,10 +28,10 @@ export default function Header() {
         }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center relative">
+          <div className="flex justify-around items-center relative">
             
             {/* Logo Area (Left) */}
-            <Link href="/" className="flex items-center gap-2 group z-20">
+            <Link href="/" className="flex items-center gap-6 group z-20">
               <div className="bg-[var(--primary)] text-black font-black text-xl w-10 h-10 flex items-center justify-center rounded-lg shadow-sm group-hover:scale-105 transition-transform">
                 EG
               </div>
