@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AdminProvider } from "@/components/admin/AdminProvider";
 import AdminControls from "@/components/admin/AdminControls";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,8 +21,18 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "Home - Best Driving Lesson Package - EG Driving School",
-  description: "Expert driving instruction for all ages and skill levels. Serving North Brisbane, Moreton Bay, and Redcliffe. Auto transmission specialist since 2015.",
-  keywords: ["driving school", "driving lessons", "Brisbane", "Moreton Bay", "Redcliffe", "auto transmission", "learner driver", "driving instructor"],
+  description:
+    "Expert driving instruction for all ages and skill levels. Serving North Brisbane, Moreton Bay, and Redcliffe. Auto transmission specialist since 2015.",
+  keywords: [
+    "driving school",
+    "driving lessons",
+    "Brisbane",
+    "Moreton Bay",
+    "Redcliffe",
+    "auto transmission",
+    "learner driver",
+    "driving instructor",
+  ],
   authors: [{ name: "EG Driving School" }],
   openGraph: {
     title: "EG Driving School - Expert Driving Instruction",
@@ -38,15 +49,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
-        <AdminProvider>
-          <Header />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <AdminControls />
-        </AdminProvider>
+        <AuthProvider>
+          <AdminProvider>
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <AdminControls />
+          </AdminProvider>
+        </AuthProvider>
       </body>
     </html>
   );
 }
-
