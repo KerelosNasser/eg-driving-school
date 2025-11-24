@@ -5,7 +5,6 @@ import PriceListSection from '@/components/home/PriceListSection';
 import CtaSection from '@/components/home/CtaSection';
 import PackagesSection from '@/components/home/PackagesSection';
 import GallerySection from '@/components/home/GallerySection';
-import IntroSection from '@/components/home/IntroSection';
 import ServiceAreaSection from '@/components/home/ServiceAreaSection';
 import ContactSection from '@/components/home/ContactSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
@@ -20,7 +19,6 @@ export default function HomePage() {
       <CtaSection />
       <PackagesSection />
       <GallerySection />
-      <IntroSection />
       <ServiceAreaSection />
       <ContactSection />
       <NewsletterSection />

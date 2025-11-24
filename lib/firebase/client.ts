@@ -12,15 +12,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-console.log("Firebase Config Debug:", {
-  apiKey: firebaseConfig.apiKey ? "Present" : "Missing",
-  authDomain: firebaseConfig.authDomain,
-  projectId: firebaseConfig.projectId,
-  storageBucket: firebaseConfig.storageBucket,
-  messagingSenderId: firebaseConfig.messagingSenderId,
-  appId: firebaseConfig.appId,
-});
-
 // Initialize Firebase
 let app: FirebaseApp | undefined;
 let auth: Auth | undefined;

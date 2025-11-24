@@ -1,38 +1,35 @@
 "use client";
 
-import { MapPin } from 'lucide-react';
+import { useState } from 'react';
+import { MapPin, Search, Loader2 } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { useLoadScript } from "@react-google-maps/api";
+import ServiceAreaMap from './ServiceAreaMap';
+import { serviceAreas } from '@/lib/data/service-areas';
+
+const libraries: ("places")[] = ["places"];
 
 export default function ServiceAreaSection() {
-  const suburbs = [
-    "Albany Creek, QLD 4035", "Arana Hills, QLD 4054", "Aspley, QLD 4034", "Bald Hills, QLD 4036", 
-    "Boondall, QLD 4034", "Bracken Ridge, QLD 4017", "Bray Park, QLD 4500", "Brendale, QLD 4500", 
-    "Bridgeman Downs, QLD 4035", "Brighton, QLD 4017", "Bunya, QLD 4055", "Burpengary, QLD 4505", 
-    "Burpengary East, QLD 4505", "Caboolture South, QLD 4510", "Carseldine, QLD 4034", "Cashmere, QLD 4500", 
-    "Chermside, QLD 4032", "Chermside West, QLD 4032", "Clontarf, QLD 4019", "Dakabin, QLD 4503", 
-    "Deagon, QLD 4017", "Deception Bay, QLD 4508", "Eatons Hill, QLD 4037", "Everton Hills, QLD 4053", 
-    "Everton Park, QLD 4053", "Ferny Grove, QLD 4055", "Ferny Hills, QLD 4055", "Fitzgibbon, QLD 4018", 
-    "Geebung, QLD 4034", "Griffin, QLD 4503", "Joyner, QLD 4500", "Kallangur, QLD 4503", 
-    "Kedron, QLD 4031", "Keperra, QLD 4054", "Kippa Ring, QLD 4021", "Kurwongbah, QLD 4503", 
-    "Lawnton, QLD 4501", "Mango Hill, QLD 4509", "Margate, QLD 4019", "Mcdowall, QLD 4053", 
-    "Mitchelton, QLD 4053", "Morayfield, QLD 4506", "Murrumba Downs, QLD 4503", "Narangba, QLD 4504", 
-    "Newport, QLD 4020", "North Lakes, QLD 4509", "Petrie, QLD 4502", "Redcliffe, QLD 4020", 
-    "Rothwell, QLD 4022", "Sandgate, QLD 4017", "Scarborough, QLD 4020", "Shorncliffe, QLD 4017", 
-    "Stafford Heights, QLD 4053", "Strathpine, QLD 4500", "Taigum, QLD 4018", "Upper Caboolture, QLD 4510", 
-    "Upper Kedron, QLD 4055", "Warner, QLD 4500", "Wavell Heights, QLD 4012", "Whiteside, QLD 4503", 
-    "Woody Point, QLD 4019", "Zillmere, QLD 4034"
-  ];
+  const [searchTerm, setSearchTerm] = useState("");
+  const [hoveredArea, setHoveredArea] = useState<string | null>(null);
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
+
+  const filteredAreas = serviceAreas.filter(area => 
+    area.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    area.postcode.includes(searchTerm)
+  );
 
   return (
     <section className="py-20 md:py-32 bg-[#f4f4f4] relative overflow-hidden">
       {/* Background Map Pattern (Abstract) */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
-         <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M0 0 L100 100 M100 0 L0 100" stroke="currentColor" strokeWidth="0.5" />
-            <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.5" />
-         </svg>
       </div>
 
-      <div className="container max-w-6xl mx-auto px-4 relative z-10">
+      <div className="container max-w-7xl mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-md mb-6 text-(--primary)">
             <MapPin size={32} />
@@ -45,21 +42,69 @@ export default function ServiceAreaSection() {
           </p>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-3">
-          {suburbs.map((suburb, index) => (
-            <span 
-              key={index} 
-              className="bg-white px-4 py-2 rounded-full text-sm text-gray-600 shadow-sm border border-gray-100 hover:border-(--primary) hover:text-black transition-colors cursor-default"
-            >
-              {suburb}
-            </span>
-          ))}
-        </div>
-        
-        <div className="mt-16 text-center">
-          <p className="text-gray-500 text-sm font-light">
-            Don't see your suburb? <a href="/contact" className="text-black underline hover:text-(--primary) transition-colors">Contact us</a> to check availability.
-          </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Left Column: Search & List */}
+          <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 h-[600px] flex flex-col">
+            <div className="relative mb-6">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input 
+                type="text" 
+                placeholder="Search suburb or postcode..." 
+                className="pl-12 h-12 text-lg bg-gray-50 border-gray-200 focus:bg-white transition-all rounded-xl"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+              {filteredAreas.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {filteredAreas.map((area) => (
+                    <div 
+                      key={`${area.name}-${area.postcode}`}
+                      className="group flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer"
+                      onMouseEnter={() => setHoveredArea(area.name)}
+                      onMouseLeave={() => setHoveredArea(null)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                          <MapPin size={14} />
+                        </div>
+                        <span className="font-medium text-gray-700 group-hover:text-blue-700 transition-colors">
+                          {area.name}
+                        </span>
+                      </div>
+                      <span className="text-xs font-semibold text-gray-400 group-hover:text-blue-400 transition-colors">
+                        {area.postcode}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-gray-400">
+                  <MapPin size={48} className="mb-4 opacity-20" />
+                  <p>No areas found matching &quot;{searchTerm}&quot;</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="mt-6 pt-6 border-t border-gray-100 text-center">
+              <p className="text-gray-500 text-sm font-light">
+                Don&apos;t see your suburb? <a href="/contact" className="text-black underline hover:text-blue-600 transition-colors">Contact us</a> to check availability.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Column: Map */}
+          <div className="h-[600px] rounded-3xl overflow-hidden shadow-lg border border-gray-100 relative bg-gray-200">
+            {isLoaded ? (
+              <ServiceAreaMap areas={serviceAreas} highlightedArea={hoveredArea} />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>

@@ -36,43 +36,45 @@ const PACKAGES: DrivingPackage[] = [
 export default function PriceListSection() {
   return (
     <section className="py-16 md:py-24 bg-white">
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="container max-w-5xl mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-6 text-black">Menu / Price List</h2>
         <h3 className="text-2xl font-bold text-center text-black mb-8">First Category</h3>
-        <p className="text-center text-gray-500 mb-12 font-light">Add a description about this category</p>
+        <p className="text-center text-gray-500 mb-16 font-light">Add a description about this category</p>
         
-        {/* Grid View for All Screens */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* Grid View: 2 columns, minimal design with separators */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:gap-x-12 md:gap-y-16">
           {PACKAGES.map((pkg) => (
             <div 
               key={pkg.id} 
-              className="flex flex-col p-5 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-black transition-all duration-300 h-full hover:shadow-md"
+              className="flex flex-col border-b border-gray-200 pb-8 md:pb-10"
             >
-              <div className="mb-4 w-full flex-grow">
-                <h4 className="text-black text-lg font-medium mb-2 leading-tight">{pkg.name}</h4>
-                <div className="text-2xl font-bold text-black mb-3">${pkg.price}</div>
+              <div className="mb-4 grow">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-3">
+                  <h4 className="text-black text-lg md:text-xl font-medium leading-tight">{pkg.name}</h4>
+                  <div className="text-xl md:text-2xl font-bold text-black">${pkg.price}</div>
+                </div>
                 
                 {/* Description */}
                 {pkg.description && (
-                  <p className="text-gray-500 text-xs leading-relaxed mb-3">
+                  <p className="text-gray-500 text-xs md:text-sm leading-relaxed mb-4 font-light">
                     {pkg.description}
                   </p>
                 )}
 
                 {/* Warning Note */}
                 {pkg.warning && (
-                  <div className="mt-2 p-2.5 bg-red-50 border border-red-100 rounded-lg">
-                    <p className="text-red-600 text-[10px] font-bold uppercase leading-tight tracking-wide">
+                  <div className="mt-2 p-3 bg-red-50 border border-red-100 rounded-lg">
+                    <p className="text-red-600 text-[10px] md:text-xs font-bold uppercase leading-tight tracking-wide">
                       {pkg.warning}
                     </p>
                   </div>
                 )}
               </div>
               
-              <div className="mt-auto pt-2">
+              <div className="mt-auto">
                 <Link
                   href={`/book?package=${pkg.id}`}
-                  className="w-full bg-black text-white px-4 py-3 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 group"
+                  className="w-full md:w-auto inline-flex items-center justify-center bg-black text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors gap-2 group"
                 >
                   Book Now
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -81,18 +83,8 @@ export default function PriceListSection() {
             </div>
           ))}
         </div>
-        
-        <div className="mt-16 md:mt-16 p-8 md:p-10 bg-[#f4f4f4] rounded-xl max-w-4xl mx-auto">
-          <p className="text-gray-600 mb-6 text-sm leading-relaxed font-light">
-            Pick-up 1hr prior to test start time. 45 min pre-test warm up. Use of instructors vehicle to sit the test. Drop-off after the test result is received.
-          </p>
-          <p className="text-gray-600 text-sm leading-relaxed font-light">
-            Booking the driving Test with the Queensland transport and main roads (TMR) responsibility for booking the driving test by applicants
-          </p>
         </div>
-        
-        <p className="text-center text-gray-400 mt-10 text-xs font-light">Prices are subject to change without notice.</p>
-      </div>
+        <p className="text-center text-gray-400 mt-12 text-xs font-light">Prices are subject to change without notice.</p>
     </section>
   );
 }
