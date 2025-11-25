@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Package, LogOut, CreditCard } from "lucide-react";
+import { User, Package, LogOut, CreditCard, Calendar } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { cn } from "@/lib/utils";
 
@@ -29,10 +29,16 @@ export function ProfileSidebar() {
       icon: CreditCard,
       exact: false,
     },
+    {
+      href: "/profile/calendar",
+      label: "Calendar",
+      icon: Calendar,
+      exact: false,
+    },
   ];
 
   return (
-    <div className="w-full md:w-64 flex-shrink-0">
+    <div className="w-full md:w-64 shrink-0">
       <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sticky top-24">
         <nav className="space-y-2">
           {links.map((link) => {
@@ -47,7 +53,7 @@ export function ProfileSidebar() {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
                   isActive
-                    ? "bg-[var(--primary)] text-black font-bold shadow-[0_0_20px_rgba(255,214,0,0.2)]"
+                    ? "bg-(--primary) text-black font-bold shadow-[0_0_20px_rgba(255,214,0,0.2)]"
                     : "text-white/60 hover:text-white hover:bg-white/10"
                 )}
               >

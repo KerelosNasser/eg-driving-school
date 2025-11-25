@@ -57,6 +57,27 @@ export class CalendarService {
     });
     return response.data.calendars?.[calendarId]?.busy || [];
   }
+
+  /**
+   * Get a specific event
+   */
+  async getEvent(calendarId: string, eventId: string) {
+    const response = await this.calendar.events.get({
+      calendarId,
+      eventId,
+    });
+    return response.data;
+  }
+
+  /**
+   * Delete an event
+   */
+  async deleteEvent(calendarId: string, eventId: string) {
+    await this.calendar.events.delete({
+      calendarId,
+      eventId,
+    });
+  }
 }
 
 export const calendarService = new CalendarService();
