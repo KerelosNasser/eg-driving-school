@@ -3,7 +3,7 @@ import React from "react";
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedSlots: Array<{ date: string; time: string }>;
+  selectedSlots: Array<{ date: string; time: string; originalTime: string }>;
   onConfirm: (data: {
     customerName: string;
     customerEmail: string;

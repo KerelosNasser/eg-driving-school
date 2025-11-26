@@ -16,12 +16,16 @@ export default function CalendarTab() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [warning, setWarning] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSettings = async () => {
       const result = await getAdminSettings();
       if (result.success && result.data) {
         setSettings(result.data);
+        if (result.warning) {
+          setWarning(result.warning);
+        }
       }
       setLoading(false);
     };
@@ -31,6 +35,12 @@ export default function CalendarTab() {
 
   const handleSaveSettings = async () => {
     if (!settings) return;
+    if (warning) {
+      alert(
+        "Cannot save settings in Read-Only mode. Please fix the database connection."
+      );
+      return;
+    }
     setSaving(true);
     const result = await updateAdminSettings(settings);
     if (result.success) {
@@ -110,6 +120,17 @@ export default function CalendarTab() {
           <p className="text-white/60">Manage working hours and availability</p>
         </div>
       </div>
+
+      {warning && (
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+            <p className="text-yellow-200 font-medium">
+              Read-Only Mode: {warning}
+            </p>
+          </div>
+        </div>
+      )}
 
       {isAdmin ? (
         // Admin View

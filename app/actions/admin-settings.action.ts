@@ -14,31 +14,54 @@ export interface CalendarSettings {
 const SETTINGS_COLLECTION = 'settings';
 const CALENDAR_DOC = 'calendar';
 
-export async function getAdminSettings(): Promise<{ success: boolean; data?: CalendarSettings; error?: string }> {
+export async function getAdminSettings(): Promise<{ success: boolean; data?: CalendarSettings; error?: string; warning?: string }> {
   try {
     if (!adminDb) {
       console.error('Firestore is not initialized in getAdminSettings');
-      throw new Error('Firestore is not initialized');
+      // Return defaults instead of throwing
+      return { 
+        success: true, 
+        data: {
+          workingDays: [1, 2, 3, 4, 5],
+          workingHours: { start: '09:00', end: '17:00' },
+          vacations: [],
+        },
+        warning: 'Database not initialized. Using default settings (Read-Only).'
+      };
     }
 
     const docRef = adminDb.collection(SETTINGS_COLLECTION).doc(CALENDAR_DOC);
-    const doc = await docRef.get();
+    
+    try {
+      const doc = await docRef.get();
 
-    if (!doc.exists) {
-      console.log('No calendar settings found, returning defaults');
-      // Return default settings if none exist
-      const defaultSettings: CalendarSettings = {
-        workingDays: [1, 2, 3, 4, 5], // Monday-Friday
-        workingHours: {
-          start: '09:00',
-          end: '17:00',
+      if (!doc.exists) {
+        console.log('No calendar settings found, returning defaults');
+        const defaultSettings: CalendarSettings = {
+          workingDays: [1, 2, 3, 4, 5], // Monday-Friday
+          workingHours: {
+            start: '09:00',
+            end: '17:00',
+          },
+          vacations: [],
+        };
+        return { success: true, data: defaultSettings };
+      }
+
+      return { success: true, data: doc.data() as CalendarSettings };
+    } catch (dbError: any) {
+      console.error('Firestore read error:', dbError);
+      // Return defaults on DB error
+      return { 
+        success: true, 
+        data: {
+          workingDays: [1, 2, 3, 4, 5],
+          workingHours: { start: '09:00', end: '17:00' },
+          vacations: [],
         },
-        vacations: [],
+        warning: `Database error: ${dbError.message}. Using default settings (Read-Only).`
       };
-      return { success: true, data: defaultSettings };
     }
-
-    return { success: true, data: doc.data() as CalendarSettings };
   } catch (error: any) {
     console.error('Get Admin Settings Error:', error);
     return { success: false, error: error.message };

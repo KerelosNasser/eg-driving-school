@@ -1,6 +1,9 @@
 import { google } from 'googleapis';
 import 'server-only';
 
+import fs from 'fs';
+import path from 'path';
+
 // Scopes required for the various APIs
 const SCOPES = [
   'https://www.googleapis.com/auth/calendar',
@@ -23,13 +26,27 @@ export const getGoogleAuth = () => {
   if (authClient) return authClient;
 
   const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+  const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
-  if (!credentialsJson) {
-    throw new Error('Missing GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable');
-  }
+  let credentials: ServiceAccountKey;
 
   try {
-    const credentials = JSON.parse(credentialsJson) as ServiceAccountKey;
+    if (credentialsJson) {
+      credentials = JSON.parse(credentialsJson) as ServiceAccountKey;
+    } else if (credentialsPath) {
+      // Handle file path
+      const resolvedPath = path.isAbsolute(credentialsPath) 
+        ? credentialsPath 
+        : path.join(process.cwd(), credentialsPath);
+      
+      if (!fs.existsSync(resolvedPath)) {
+        throw new Error(`Credentials file not found at ${resolvedPath}`);
+      }
+      const fileContent = fs.readFileSync(resolvedPath, 'utf-8');
+      credentials = JSON.parse(fileContent) as ServiceAccountKey;
+    } else {
+      throw new Error('Missing GOOGLE_APPLICATION_CREDENTIALS_JSON or GOOGLE_APPLICATION_CREDENTIALS environment variable');
+    }
 
     authClient = new google.auth.GoogleAuth({
       credentials: {
@@ -43,6 +60,6 @@ export const getGoogleAuth = () => {
     return authClient;
   } catch (error) {
     console.error('Error parsing Google credentials:', error);
-    throw new Error('Invalid GOOGLE_APPLICATION_CREDENTIALS_JSON format');
+    throw error;
   }
 };

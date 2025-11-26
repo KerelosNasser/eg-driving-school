@@ -11,12 +11,13 @@ import BookingModal from "../calendar/BookingModal";
 interface TimeSlot {
   time: string;
   available: boolean;
+  originalTime: string;
 }
 
 export default function CalendarSection() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedSlots, setSelectedSlots] = useState<
-    Array<{ date: string; time: string }>
+    Array<{ date: string; time: string; originalTime: string }>
   >([]);
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,9 +30,12 @@ export default function CalendarSection() {
     const [endHour] = end.split(":").map(Number);
 
     for (let hour = startHour; hour < endHour; hour++) {
+      const ampm = hour >= 12 ? "PM" : "AM";
+      const displayHour = hour % 12 || 12;
       slots.push({
-        time: `${hour.toString().padStart(2, "0")}:00`,
+        time: `${displayHour}:00 ${ampm}`,
         available: true,
+        originalTime: `${hour.toString().padStart(2, "0")}:00`, // Keep 24h for logic
       });
     }
 
@@ -84,7 +88,7 @@ export default function CalendarSection() {
         const busySlots = availabilityResult.data;
         const updatedSlots = slots.map((slot) => {
           const slotStart = new Date(date);
-          const [hours, minutes] = slot.time.split(":").map(Number);
+          const [hours, minutes] = slot.originalTime.split(":").map(Number);
           slotStart.setHours(hours, minutes, 0, 0);
           const slotEnd = new Date(slotStart);
           slotEnd.setHours(hours + 1, minutes, 0, 0);
@@ -120,12 +124,23 @@ export default function CalendarSection() {
     if (!selectedDate) return;
 
     const dateStr = selectedDate.toISOString().split("T")[0];
-    const slotKey = { date: dateStr, time };
+    const slot = timeSlots.find((s) => s.time === time);
+    if (!slot) return;
+
+    const slotKey = {
+      date: dateStr,
+      time: slot.time,
+      originalTime: slot.originalTime,
+    };
 
     setSelectedSlots((prev) => {
-      const exists = prev.some((s) => s.date === dateStr && s.time === time);
+      const exists = prev.some(
+        (s) => s.date === dateStr && s.originalTime === slot.originalTime
+      );
       if (exists) {
-        return prev.filter((s) => !(s.date === dateStr && s.time === time));
+        return prev.filter(
+          (s) => !(s.date === dateStr && s.originalTime === slot.originalTime)
+        );
       } else {
         return [...prev, slotKey];
       }
@@ -138,7 +153,7 @@ export default function CalendarSection() {
     // Group slots by date
     const slotsByDate = selectedSlots.reduce((acc, slot) => {
       if (!acc[slot.date]) acc[slot.date] = [];
-      acc[slot.date].push(slot.time);
+      acc[slot.date].push(slot.originalTime);
       return acc;
     }, {} as Record<string, string[]>);
 
@@ -306,7 +321,7 @@ export default function CalendarSection() {
                     const isSelected = selectedSlots.some(
                       (s) =>
                         s.date === selectedDate.toISOString().split("T")[0] &&
-                        s.time === slot.time
+                        s.originalTime === slot.originalTime
                     );
                     return (
                       <button
