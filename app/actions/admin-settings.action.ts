@@ -9,6 +9,7 @@ export interface CalendarSettings {
     end: string;   // "17:00"
   };
   vacations: string[]; // ["2024-12-25", "2024-12-26"]
+  calendarId?: string; // Google Calendar ID (email address or 'primary')
 }
 
 const SETTINGS_COLLECTION = 'settings';

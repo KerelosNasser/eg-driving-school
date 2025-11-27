@@ -78,7 +78,6 @@ export default function CalendarSection() {
       timeMax.setHours(23, 59, 59, 999);
 
       const availabilityResult = await checkAvailabilityAction(
-        "primary",
         timeMin.toISOString(),
         timeMax.toISOString()
       );

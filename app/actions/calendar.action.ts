@@ -4,11 +4,16 @@ import { calendarService } from '@/lib/services/calendar.service';
 
 export async function listEventsAction(calendarId = 'primary') {
   try {
+    console.log(`[Calendar Action] Listing events for ${calendarId}`);
     const events = await calendarService.listEvents(calendarId);
+    console.log(`[Calendar Action] Successfully retrieved ${events.length} events`);
     return { success: true, data: events };
   } catch (error: any) {
-    console.error('Calendar List Error:', error);
-    return { success: false, error: error.message };
+    console.error('[Calendar Action] List events failed:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to retrieve calendar events. Please check your Google Calendar configuration.' 
+    };
   }
 }
 
@@ -20,22 +25,40 @@ export async function createEventAction(calendarId: string, eventData: {
   attendees?: string[];
 }) {
   try {
+    console.log(`[Calendar Action] Creating event: ${eventData.summary}`);
     const event = await calendarService.createEvent(calendarId, eventData);
+    console.log(`[Calendar Action] Event created with ID: ${event.id}`);
     return { success: true, data: event };
   } catch (error: any) {
-    console.error('Calendar Create Error:', error);
-    return { success: false, error: error.message };
+    console.error('[Calendar Action] Create event failed:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to create calendar event. Please try again.' 
+    };
   }
 }
 
 
-export async function checkAvailabilityAction(calendarId: string, timeMin: string, timeMax: string) {
+export async function checkAvailabilityAction(timeMin: string, timeMax: string) {
   try {
+    console.log(`[Calendar Action] Checking availability from ${timeMin} to ${timeMax}`);
+    
+    // Fetch calendar ID from settings
+    const { getAdminSettings } = await import('./admin-settings.action');
+    const settingsResult = await getAdminSettings();
+    const calendarId = settingsResult.data?.calendarId || 'primary';
+    
+    console.log(`[Calendar Action] Using calendar ID: ${calendarId}`);
+    
     const busySlots = await calendarService.checkAvailability(calendarId, timeMin, timeMax);
+    console.log(`[Calendar Action] Found ${busySlots.length} busy time slots`);
     return { success: true, data: busySlots };
   } catch (error: any) {
-    console.error('Calendar Availability Error:', error);
-    return { success: false, error: error.message };
+    console.error('[Calendar Action] Check availability failed:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to check calendar availability. Please verify your Google Calendar setup.' 
+    };
   }
 }
 
@@ -50,6 +73,13 @@ export async function bookAppointmentAction(bookingDetails: {
   location?: string;
 }) {
   try {
+    // Fetch calendar ID from settings
+    const { getAdminSettings } = await import('./admin-settings.action');
+    const settingsResult = await getAdminSettings();
+    const calendarId = settingsResult.data?.calendarId || 'primary';
+    
+    console.log(`[Calendar Action] Booking appointment using calendar ID: ${calendarId}`);
+    
     const events = [];
     // Create an event for each time slot (or one combined event if consecutive - for now, individual events for simplicity or per requirement)
     // The requirement says "pick a single time slot or multiple time slots isnt required to be consecutive"
@@ -71,9 +101,9 @@ export async function bookAppointmentAction(bookingDetails: {
       const endDate = new Date(startDate);
       endDate.setHours(hours + 1, minutes, 0, 0); // 1 hour duration
 
-      const event = await calendarService.createEvent('primary', {
+      const event = await calendarService.createEvent(calendarId, {
         summary: `Driving Lesson - ${bookingDetails.customerName}`,
-        description: `Phone: ${bookingDetails.customerPhone}\nEmail: ${bookingDetails.customerEmail}`,
+        description: `Phone: ${bookingDetails.customerPhone}\\nEmail: ${bookingDetails.customerEmail}`,
         startTime: startDate.toISOString(),
         endTime: endDate.toISOString(),
         attendees: [bookingDetails.customerEmail],

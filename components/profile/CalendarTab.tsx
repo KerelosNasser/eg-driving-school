@@ -208,6 +208,38 @@ export default function CalendarTab() {
             </div>
           </div>
 
+          {/* Google Calendar ID */}
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <h3 className="text-xl font-bold text-white mb-2">
+              Google Calendar ID
+            </h3>
+            <p className="text-sm text-white/60 mb-4">
+              Enter your Google Calendar ID to sync events and manage
+              availability.
+              <br />
+              <span className="text-xs">
+                Find it in Google Calendar → Settings → Your calendar →
+                Integrate calendar → Calendar ID
+              </span>
+            </p>
+            <input
+              type="text"
+              value={settings.calendarId || ""}
+              onChange={(e) =>
+                setSettings({
+                  ...settings,
+                  calendarId: e.target.value,
+                })
+              }
+              placeholder="example@gmail.com or primary"
+              className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-(--primary) focus:outline-none transition-colors"
+            />
+            <p className="text-xs text-white/40 mt-2">
+              💡 Usually your email address. Leave empty to use 'primary'
+              (service account's calendar).
+            </p>
+          </div>
+
           {/* Vacation Days */}
           <div className="bg-white/5 border border-white/10 rounded-xl p-6">
             <h3 className="text-xl font-bold text-white mb-4">Vacation Days</h3>
