@@ -108,5 +108,41 @@ export async function sendCancellationNotification(customerEmail: string, custom
     `,
   };
 
+
   await transporter.sendMail(mailOptions);
 }
+
+export async function sendAnnouncement(subject: string, body: string, recipients: string[]) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn('SMTP credentials missing. Skipping email.');
+    return;
+  }
+
+  // Send individually to avoid exposing all emails in "To" field
+  // In a real production app with many users, use a bulk email service or BCC
+  // For this scale, loop is acceptable or BCC
+  
+  const mailOptions = {
+    from: `"EG Driving School" <${process.env.SMTP_USER}>`,
+    bcc: recipients, // Use BCC for privacy
+    subject: subject,
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        ${body}
+        <hr style="margin-top: 20px; border: 0; border-top: 1px solid #eee;">
+        <p style="font-size: 12px; color: #888;">
+          You received this email as a registered user of EG Driving School.
+        </p>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Announcement sent to ${recipients.length} recipients`);
+  } catch (error) {
+    console.error('Error sending announcement:', error);
+    throw error;
+  }
+}
+

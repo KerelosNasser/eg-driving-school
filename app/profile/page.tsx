@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { User, Mail, Phone, Hash, Shield, Clock, Calendar } from "lucide-react";
+import {
+  User,
+  Mail,
+  Phone,
+  Hash,
+  Shield,
+  Clock,
+  Calendar,
+  Package as UserPackageIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { UserPackage } from "@/types/user-package";
 import { userPackageService } from "@/lib/services/user-package-service";
@@ -58,6 +67,48 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Quick Actions for Users */}
+      {!isAdmin && (
+        <div className="mb-12">
+          <h2 className="text-xl font-semibold text-(--primary) mb-6">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link
+              href="/profile/calendar"
+              className="flex flex-col items-center justify-center gap-3 p-6 bg-(--primary) text-black rounded-xl hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(255,214,0,0.1)] hover:shadow-[0_0_30px_rgba(255,214,0,0.3)] group"
+            >
+              <div className="w-12 h-12 rounded-full bg-black/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Calendar size={24} />
+              </div>
+              <span className="font-bold text-lg">Book a Lesson</span>
+            </Link>
+
+            <Link
+              href="/profile/packages"
+              className="flex flex-col items-center justify-center gap-3 p-6 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/10"
+            >
+              <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                <UserPackageIcon size={24} />
+              </div>
+              <span className="font-bold text-lg">Buy Package</span>
+            </Link>
+
+            <a
+              href="https://wa.me/61431512095"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center gap-3 p-6 bg-white/5 text-white/80 rounded-xl hover:bg-white/10 transition-all duration-300 border border-white/5"
+            >
+              <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                <Phone size={24} />
+              </div>
+              <span className="font-bold text-lg">Contact Support</span>
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* My Packages Section */}
       {!isAdmin && (

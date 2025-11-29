@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Package, LogOut, CreditCard, Calendar, Tag } from "lucide-react";
+import {
+  User,
+  Package,
+  LogOut,
+  CreditCard,
+  Calendar,
+  Tag,
+  Mail,
+} from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { cn } from "@/lib/utils";
 
@@ -38,12 +46,26 @@ export function ProfileSidebar() {
   ];
 
   if (profile?.role === "admin") {
-    links.push({
-      href: "/profile/tiers",
-      label: "Tiers & Codes",
-      icon: Tag,
-      exact: false,
-    });
+    links.push(
+      {
+        href: "/profile/tiers",
+        label: "Tiers & Codes",
+        icon: Tag,
+        exact: false,
+      },
+      {
+        href: "/profile/announcements",
+        label: "Announcements",
+        icon: Mail,
+        exact: false,
+      },
+      {
+        href: "/profile/users",
+        label: "Users List",
+        icon: User,
+        exact: false,
+      }
+    );
   }
 
   return (

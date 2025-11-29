@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { AdminProvider } from "@/components/admin/AdminProvider";
 import AdminControls from "@/components/admin/AdminControls";
 import { AuthProvider } from "@/components/providers/AuthProvider";
@@ -108,7 +107,6 @@ export default function RootLayout({
           <AdminProvider>
             <Header />
             <main className="min-h-screen">{children}</main>
-            <Footer />
             <AdminControls />
           </AdminProvider>
         </AuthProvider>
