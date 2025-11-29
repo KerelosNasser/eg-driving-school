@@ -5,7 +5,8 @@ import {
   addDoc, 
   updateDoc, 
   query, 
-  where
+  where,
+  getDoc
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase/client';
 import { Payment, CreatePaymentInput, PaymentStatus } from '@/types/payment';
@@ -89,6 +90,52 @@ export const paymentService = {
     
     try {
       const docRef = doc(db, PAYMENTS_COLLECTION, id);
+      const paymentSnap = await getDoc(docRef);
+      
+      if (!paymentSnap.exists()) {
+        throw new Error('Payment not found');
+      }
+
+      const paymentData = paymentSnap.data() as Payment;
+
+      // If approving, grant package and increment code usage
+      if (status === 'approved' && paymentData.status !== 'approved') {
+        if (paymentData.packageId) {
+          // Import here to avoid circular dependencies if any, or just use the service
+          const { packageService } = await import('./package-service');
+          const { userPackageService } = await import('./user-package-service');
+          
+          const pkg = await packageService.getPackage(paymentData.packageId);
+          
+          if (pkg) {
+            await userPackageService.grantPackage({
+              userId: paymentData.userId,
+              packageId: pkg.id,
+              packageName: pkg.name,
+              totalHours: pkg.hours,
+              remainingHours: pkg.hours,
+              active: true
+            });
+          }
+        }
+
+        if (paymentData.invitationCode) {
+          const { tierService } = await import('./tier-service');
+          // We need the code ID, but we only stored the code string. 
+          // Let's find the code ID first.
+          // Actually, tierService.validateCode returns codeId. 
+          // But here we just want to increment usage. 
+          // Let's add a method to tierService to increment by code string or just find it here.
+          // Better: Let's assume we can find it.
+          // For now, let's just query for it.
+          const codes = await tierService.getAllCodes();
+          const code = codes.find(c => c.code === paymentData.invitationCode);
+          if (code) {
+            await tierService.incrementCodeUsage(code.id);
+          }
+        }
+      }
+
       const updateData: Record<string, any> = {
         status,
         updatedAt: new Date().toISOString()
@@ -105,3 +152,4 @@ export const paymentService = {
     }
   }
 };
+

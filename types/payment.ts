@@ -1,4 +1,4 @@
-export type PaymentStatus = 'pending' | 'approved' | 'rejected';
+export type PaymentStatus = "pending" | "approved" | "rejected";
 
 export interface Payment {
   id: string;
@@ -9,6 +9,9 @@ export interface Payment {
   referenceId: string; // e.g., PayID reference or receipt number
   packageId?: string;
   packageName?: string;
+  invitationCode?: string;
+  originalAmount?: number;
+  discountApplied?: number;
   status: PaymentStatus;
   notes?: string;
   createdAt: string;
@@ -23,5 +26,8 @@ export interface CreatePaymentInput {
   referenceId: string;
   packageId?: string;
   packageName?: string;
+  invitationCode?: string;
+  originalAmount?: number;
+  discountApplied?: number;
   notes?: string;
 }

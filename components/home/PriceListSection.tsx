@@ -82,7 +82,7 @@ export default function PriceListSection() {
 
               <div className="mt-auto">
                 <Link
-                  href={`/book?package=${pkg.id}`}
+                  href="/profile/packages"
                   className="w-full md:w-auto inline-flex items-center justify-center bg-black text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors gap-2 group"
                 >
                   Book Now

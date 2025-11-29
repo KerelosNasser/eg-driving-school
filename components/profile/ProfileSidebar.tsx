@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Package, LogOut, CreditCard, Calendar } from "lucide-react";
+import { User, Package, LogOut, CreditCard, Calendar, Tag } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { cn } from "@/lib/utils";
 
 export function ProfileSidebar() {
   const pathname = usePathname();
-  const { signOut } = useAuth();
+  const { signOut, profile } = useAuth();
 
   const links = [
     {
@@ -36,6 +36,15 @@ export function ProfileSidebar() {
       exact: false,
     },
   ];
+
+  if (profile?.role === "admin") {
+    links.push({
+      href: "/profile/tiers",
+      label: "Tiers & Codes",
+      icon: Tag,
+      exact: false,
+    });
+  }
 
   return (
     <div className="w-full md:w-64 shrink-0">

@@ -8,11 +8,11 @@ export async function listEventsAction(calendarId = 'primary') {
     const events = await calendarService.listEvents(calendarId);
     console.log(`[Calendar Action] Successfully retrieved ${events.length} events`);
     return { success: true, data: events };
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Calendar Action] List events failed:', error);
     return { 
       success: false, 
-      error: error.message || 'Failed to retrieve calendar events. Please check your Google Calendar configuration.' 
+      error: error instanceof Error ? error.message : 'Failed to retrieve calendar events. Please check your Google Calendar configuration.' 
     };
   }
 }
@@ -29,11 +29,11 @@ export async function createEventAction(calendarId: string, eventData: {
     const event = await calendarService.createEvent(calendarId, eventData);
     console.log(`[Calendar Action] Event created with ID: ${event.id}`);
     return { success: true, data: event };
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Calendar Action] Create event failed:', error);
     return { 
       success: false, 
-      error: error.message || 'Failed to create calendar event. Please try again.' 
+      error: error instanceof Error ? error.message : 'Failed to create calendar event. Please try again.' 
     };
   }
 }
@@ -53,11 +53,11 @@ export async function checkAvailabilityAction(timeMin: string, timeMax: string) 
     const busySlots = await calendarService.checkAvailability(calendarId, timeMin, timeMax);
     console.log(`[Calendar Action] Found ${busySlots.length} busy time slots`);
     return { success: true, data: busySlots };
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Calendar Action] Check availability failed:', error);
     return { 
       success: false, 
-      error: error.message || 'Failed to check calendar availability. Please verify your Google Calendar setup.' 
+      error: error instanceof Error ? error.message : 'Failed to check calendar availability. Please verify your Google Calendar setup.' 
     };
   }
 }
@@ -79,6 +79,59 @@ export async function bookAppointmentAction(bookingDetails: {
     const calendarId = settingsResult.data?.calendarId || 'primary';
     
     console.log(`[Calendar Action] Booking appointment using calendar ID: ${calendarId}`);
+
+    // --- Package Deduction Logic ---
+    const { adminDb } = await import('@/lib/firebase/admin');
+    
+    // 1. Find user by email
+    const usersSnapshot = await adminDb.collection('users').where('email', '==', bookingDetails.customerEmail).limit(1).get();
+    
+    if (!usersSnapshot.empty) {
+      const userDoc = usersSnapshot.docs[0];
+      const userId = userDoc.id;
+      
+      // 2. Find active package with remaining hours
+      const packagesSnapshot = await adminDb.collection('user_packages')
+        .where('userId', '==', userId)
+        .where('active', '==', true)
+        .where('remainingHours', '>', 0)
+        .orderBy('remainingHours', 'desc') // Use package with most hours first? Or expiry? Let's just pick one.
+        .limit(1)
+        .get();
+
+      if (!packagesSnapshot.empty) {
+        const packageDoc = packagesSnapshot.docs[0];
+        const packageData = packageDoc.data();
+        const hoursToDeduct = bookingDetails.timeSlots.length; // Assuming 1 hour per slot
+        
+        if (packageData.remainingHours >= hoursToDeduct) {
+          console.log(`[Calendar Action] Deducting ${hoursToDeduct} hours from package ${packageDoc.id}`);
+          await packageDoc.ref.update({
+            remainingHours: packageData.remainingHours - hoursToDeduct,
+            updatedAt: new Date().toISOString()
+          });
+        } else {
+            // Not enough hours. 
+            // Option 1: Fail booking
+            // Option 2: Deduct what's possible and warn?
+            // Option 3: Proceed but don't deduct (pay manually for rest?)
+            // For now, let's log a warning but proceed with booking (maybe they pay difference).
+            // Ideally we should prompt user, but this is a server action called after UI selection.
+            console.warn(`[Calendar Action] User has package but not enough hours. Required: ${hoursToDeduct}, Available: ${packageData.remainingHours}`);
+            // We could deduct all remaining and leave 0?
+            // Let's deduct all remaining for now.
+             await packageDoc.ref.update({
+                remainingHours: 0,
+                updatedAt: new Date().toISOString()
+              });
+        }
+      } else {
+          console.log(`[Calendar Action] No active package found for user ${userId}. Proceeding with standard booking.`);
+      }
+    } else {
+        console.log(`[Calendar Action] User not found for email ${bookingDetails.customerEmail}. Proceeding with standard booking.`);
+    }
+    // -------------------------------
     
     const events = [];
     // Create an event for each time slot (or one combined event if consecutive - for now, individual events for simplicity or per requirement)
@@ -89,7 +142,6 @@ export async function bookAppointmentAction(bookingDetails: {
     // Actually, if they are not consecutive, they MUST be separate events.
     
     for (const slot of bookingDetails.timeSlots) {
-      const startTime = `${bookingDetails.date}T${slot}:00`;
       // Assuming 1 hour slots for now, or we need to know duration. 
       // The prompt implies standard slots. Let's assume 1 hour.
       // We should probably parse the slot string to get start time.
@@ -122,9 +174,9 @@ export async function bookAppointmentAction(bookingDetails: {
     }
 
     return { success: true, data: events };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Booking Error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown booking error' };
   }
 }
 
@@ -150,8 +202,8 @@ export async function cancelAppointmentAction(eventId: string, note?: string) {
     }
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error('Cancellation Error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown cancellation error' };
   }
 }

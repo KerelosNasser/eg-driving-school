@@ -8,14 +8,15 @@ import {
 } from "@/app/actions/admin-settings.action";
 import { useAdmin } from "@/components/admin/AdminProvider";
 import { Calendar as CalendarIcon } from "lucide-react";
-import Link from "next/link";
+
+import CalendarSection from "@/components/home/CalendarSection";
 
 export default function CalendarTab() {
   const { isAdmin } = useAdmin();
   const [settings, setSettings] = useState<CalendarSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [currentWeek, setCurrentWeek] = useState(new Date());
+
   const [warning, setWarning] = useState<string | null>(null);
 
   useEffect(() => {
@@ -75,20 +76,6 @@ export default function CalendarTab() {
       ...settings,
       vacations: settings.vacations.filter((d) => d !== date),
     });
-  };
-
-  const getWeekDays = () => {
-    const week = [];
-    const start = new Date(currentWeek);
-    start.setDate(start.getDate() - start.getDay()); // Start from Sunday
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(start);
-      date.setDate(start.getDate() + i);
-      week.push(date);
-    }
-
-    return week;
   };
 
   if (loading) {
@@ -235,8 +222,8 @@ export default function CalendarTab() {
               className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-(--primary) focus:outline-none transition-colors"
             />
             <p className="text-xs text-white/40 mt-2">
-              💡 Usually your email address. Leave empty to use 'primary'
-              (service account's calendar).
+              💡 Usually your email address. Leave empty to use
+              &apos;primary&apos; (service account&apos;s calendar).
             </p>
           </div>
 
@@ -291,83 +278,9 @@ export default function CalendarTab() {
           </button>
         </div>
       ) : (
-        // User View - Weekly Calendar
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div className="flex justify-between items-center mb-6">
-            <button
-              onClick={() => {
-                const newWeek = new Date(currentWeek);
-                newWeek.setDate(newWeek.getDate() - 7);
-                setCurrentWeek(newWeek);
-              }}
-              className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 text-white transition-colors"
-            >
-              ← Previous
-            </button>
-            <h2 className="text-xl font-bold text-white">
-              Week of {getWeekDays()[0].toLocaleDateString("en-AU")}
-            </h2>
-            <button
-              onClick={() => {
-                const newWeek = new Date(currentWeek);
-                newWeek.setDate(newWeek.getDate() + 7);
-                setCurrentWeek(newWeek);
-              }}
-              className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 text-white transition-colors"
-            >
-              Next →
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
-            {getWeekDays().map((date, idx) => {
-              const isWorkingDay = settings.workingDays.includes(date.getDay());
-              const dateStr = date.toISOString().split("T")[0];
-              const isVacation = settings.vacations.includes(dateStr);
-
-              return (
-                <div
-                  key={idx}
-                  className="border border-white/10 rounded-lg p-4 bg-black/20"
-                >
-                  <div className="text-center mb-2">
-                    <div className="font-semibold text-sm text-[var(--primary)]">
-                      {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][idx]}
-                    </div>
-                    <div className="text-lg font-bold text-white">
-                      {date.getDate()}
-                    </div>
-                  </div>
-                  {isVacation ? (
-                    <div className="text-center text-sm text-red-400 font-semibold">
-                      Closed
-                    </div>
-                  ) : isWorkingDay ? (
-                    <div className="text-center text-sm text-green-400 font-semibold">
-                      {settings.workingHours.start} -{" "}
-                      {settings.workingHours.end}
-                    </div>
-                  ) : (
-                    <div className="text-center text-sm text-white/40">
-                      Closed
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-8 text-center">
-            <p className="text-white/60 mb-4">
-              To book a lesson, visit our home page calendar.
-            </p>
-            <Link
-              href="/#calendar"
-              className="inline-block bg-[var(--primary)] text-black px-8 py-3 rounded-xl font-bold hover:bg-white transition-colors"
-            >
-              Book Now
-            </Link>
-          </div>
+        // User View - Normal Calendar from Home Page
+        <div className="bg-white rounded-xl overflow-hidden text-black">
+          <CalendarSection />
         </div>
       )}
     </div>
