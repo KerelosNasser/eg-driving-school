@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState, useRef } from 'react';
-import Image from 'next/image';
-import { useAdmin } from './AdminProvider';
-import { cmsService } from '@/lib/services/cms.service';
-import { storage } from '@/lib/firebase/client';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Loader2, Upload } from 'lucide-react';
+import React, { useState, useRef } from "react";
+import Image from "next/image";
+import { useAdmin } from "./AdminProvider";
+import { cmsService } from "@/lib/services/cms.service";
+import { storage } from "@/lib/firebase/client";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Loader2, Upload } from "lucide-react";
 
 interface EditableImageProps {
   section: string;
@@ -19,15 +19,15 @@ interface EditableImageProps {
   priority?: boolean;
 }
 
-export default function EditableImage({ 
-  section, 
-  field, 
-  initialSrc, 
-  alt, 
-  width, 
-  height, 
-  className = '',
-  priority = false
+export default function EditableImage({
+  section,
+  field,
+  initialSrc,
+  alt,
+  width,
+  height,
+  className = "",
+  priority = false,
 }: EditableImageProps) {
   const { isAdmin, isEditing } = useAdmin();
   const [src, setSrc] = useState(initialSrc);
@@ -38,10 +38,18 @@ export default function EditableImage({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!storage) {
+      console.error("Firebase storage is not initialized");
+      return;
+    }
+
     setIsUploading(true);
     try {
       // Upload to Firebase Storage
-      const storageRef = ref(storage, `cms/${section}/${field}_${Date.now()}_${file.name}`);
+      const storageRef = ref(
+        storage,
+        `cms/${section}/${field}_${Date.now()}_${file.name}`
+      );
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
 
@@ -49,7 +57,7 @@ export default function EditableImage({
       await cmsService.updateSiteContent(section, { [field]: downloadURL });
       setSrc(downloadURL);
     } catch (error) {
-      console.error('Failed to upload image:', error);
+      console.error("Failed to upload image:", error);
       // Optionally show error toast
     } finally {
       setIsUploading(false);
@@ -68,11 +76,11 @@ export default function EditableImage({
           alt={alt}
           width={width}
           height={height}
-          className={`transition-opacity ${isUploading ? 'opacity-50' : ''}`}
+          className={`transition-opacity ${isUploading ? "opacity-50" : ""}`}
           priority={priority}
         />
-        
-        <div 
+
+        <div
           className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer border-2 border-dashed border-white/50 rounded"
           onClick={triggerUpload}
         >
