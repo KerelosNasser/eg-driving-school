@@ -1,5 +1,5 @@
 import { db } from '@/lib/firebase/client';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export interface SiteContent {
   [key: string]: any;
@@ -22,6 +22,7 @@ class CmsService {
    */
   async getSiteContent(section: string): Promise<SiteContent | null> {
     try {
+      if (!db) return null;
       const docRef = doc(db, this.contentCollection, section);
       const docSnap = await getDoc(docRef);
 
@@ -41,6 +42,7 @@ class CmsService {
    */
   async updateSiteContent(section: string, data: SiteContent): Promise<void> {
     try {
+      if (!db) throw new Error("Firestore is not initialized");
       const docRef = doc(db, this.contentCollection, section);
       await setDoc(docRef, data, { merge: true });
     } catch (error) {
@@ -54,6 +56,7 @@ class CmsService {
    */
   async getTheme(): Promise<ThemeSettings | null> {
     try {
+      if (!db) return null;
       const docRef = doc(db, this.contentCollection, this.themeDocId);
       const docSnap = await getDoc(docRef);
 
@@ -73,6 +76,7 @@ class CmsService {
    */
   async updateTheme(settings: Partial<ThemeSettings>): Promise<void> {
     try {
+      if (!db) throw new Error("Firestore is not initialized");
       const docRef = doc(db, this.contentCollection, this.themeDocId);
       await setDoc(docRef, settings, { merge: true });
     } catch (error) {

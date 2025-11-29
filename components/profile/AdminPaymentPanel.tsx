@@ -1,13 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Check, X, AlertCircle, Loader2 } from "lucide-react";
 import { Payment } from "@/types/payment";
 import { paymentService } from "@/lib/services/payment-service";
 
-export function AdminPaymentPanel() {
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [loading, setLoading] = useState(true);
+interface AdminPaymentPanelProps {
+  payments: Payment[];
+  onUpdate: () => Promise<void>;
+}
+
+export function AdminPaymentPanel({
+  payments,
+  onUpdate,
+}: AdminPaymentPanelProps) {
+  // const [payments, setPayments] = useState<Payment[]>([]); // Removed local state
+  // const [loading, setLoading] = useState(true); // Removed local loading
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rejectModal, setRejectModal] = useState<{
@@ -16,22 +24,7 @@ export function AdminPaymentPanel() {
   }>({ id: "", isOpen: false });
   const [rejectNote, setRejectNote] = useState("");
 
-  const fetchPayments = async () => {
-    try {
-      setLoading(true);
-      const data = await paymentService.getAllPayments();
-      setPayments(data);
-    } catch (err) {
-      setError("Failed to load payments");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPayments();
-  }, []);
+  // Removed internal fetchPayments and useEffect
 
   const handleStatusUpdate = async (
     id: string,
@@ -41,7 +34,7 @@ export function AdminPaymentPanel() {
     try {
       setProcessingId(id);
       await paymentService.updatePaymentStatus(id, status, notes);
-      await fetchPayments();
+      await onUpdate(); // Call parent update
       setRejectModal({ id: "", isOpen: false });
       setRejectNote("");
     } catch (err) {
@@ -52,7 +45,7 @@ export function AdminPaymentPanel() {
     }
   };
 
-  if (loading) return <div>Loading payments...</div>;
+  // if (loading) return <div>Loading payments...</div>; // Handled by parent
 
   return (
     <div className="space-y-6">

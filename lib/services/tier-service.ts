@@ -149,7 +149,7 @@ export const tierService = {
         return { isValid: false };
       }
 
-      const tierData = tierDoc.data() as Tier;
+      const tierData = tierDoc.data() as Omit<Tier, 'id'>;
 
       if (!tierData.active) {
         return { isValid: false };
