@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import QuickBookWizard from "../booking/QuickBookWizard";
+import { Button } from "@/components/ui/button";
 
 export default function CalendarSection() {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
@@ -19,12 +20,13 @@ export default function CalendarSection() {
           <p className="text-lg text-gray-600 mb-6">
             Click below to start your quick booking process
           </p>
-          <button
+          <Button
             onClick={() => setIsWizardOpen(true)}
-            className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg"
+            size="lg"
+            className="px-8 py-6 text-lg font-semibold shadow-lg"
           >
             Quick Book Now
-          </button>
+          </Button>
         </div>
       </div>
 

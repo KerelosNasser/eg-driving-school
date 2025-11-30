@@ -20,6 +20,7 @@ import {
   bookAppointmentAction,
 } from "@/app/actions/calendar.action";
 import { getAdminSettings } from "@/app/actions/admin-settings.action";
+import { Button } from "@/components/ui/button";
 
 type WizardStep = "package" | "payment" | "calendar" | "success";
 
@@ -295,9 +296,9 @@ export default function QuickBookWizard({
           key={day}
           onClick={() => !isPast && setSelectedDate(date)}
           disabled={isPast}
-          className={`p-2 rounded-lg transition-all ${
+          className={`p-2 rounded-lg transition-all text-sm ${
             isSelected
-              ? "bg-(--primary) text-black font-bold"
+              ? "bg-[var(--primary)] text-black font-bold"
               : isToday
               ? "bg-blue-100 text-blue-600 font-semibold"
               : isPast
@@ -316,8 +317,8 @@ export default function QuickBookWizard({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-      <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/90 backdrop-blur-sm">
+      <div className="bg-[#1a1a1a] border-t md:border border-white/10 rounded-t-2xl md:rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl h-[90vh] md:h-auto md:max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-white/10">
           <div>
@@ -338,7 +339,7 @@ export default function QuickBookWizard({
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[60vh] overflow-y-auto">
+        <div className="p-4 md:p-6 overflow-y-auto flex-1">
           {/* Package Selection */}
           {currentStep === "package" && (
             <div className="space-y-6">
@@ -410,17 +411,18 @@ export default function QuickBookWizard({
                 ))}
               </div>
 
-              <button
+              <Button
                 onClick={handlePackageContinue}
                 disabled={
                   (!useExistingPackage && !selectedPackage) ||
                   (useExistingPackage && !selectedUserPackageId)
                 }
-                className="w-full py-3 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-6 text-lg font-bold"
+                size="lg"
               >
                 Continue
-                <ChevronRight size={18} />
-              </button>
+                <ChevronRight size={18} className="ml-2" />
+              </Button>
             </div>
           )}
 
@@ -475,22 +477,26 @@ export default function QuickBookWizard({
               </div>
 
               <div className="flex gap-3">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setCurrentStep("package")}
-                  className="px-4 py-2 text-white/60 hover:text-white transition-colors flex items-center gap-2"
+                  className="text-white/60 hover:text-white"
                 >
-                  <ArrowLeft size={18} />
+                  <ArrowLeft size={18} className="mr-2" />
                   Back
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handlePaymentContinue}
                   disabled={!paymentReference || loading}
-                  className="flex-1 py-3 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 py-6 text-lg font-bold"
+                  size="lg"
                 >
-                  {loading && <Loader2 size={18} className="animate-spin" />}
+                  {loading && (
+                    <Loader2 size={18} className="animate-spin mr-2" />
+                  )}
                   Continue
-                  <ChevronRight size={18} />
-                </button>
+                  <ChevronRight size={18} className="ml-2" />
+                </Button>
               </div>
             </div>
           )}
@@ -605,21 +611,25 @@ export default function QuickBookWizard({
               </div>
 
               <div className="flex gap-3">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setCurrentStep("package")}
-                  className="px-4 py-2 text-white/60 hover:text-white transition-colors flex items-center gap-2"
+                  className="text-white/60 hover:text-white"
                 >
-                  <ArrowLeft size={18} />
+                  <ArrowLeft size={18} className="mr-2" />
                   Back
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleBooking}
                   disabled={!selectedSlot || loading}
-                  className="flex-1 py-3 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 py-6 text-lg font-bold"
+                  size="lg"
                 >
-                  {loading && <Loader2 size={18} className="animate-spin" />}
+                  {loading && (
+                    <Loader2 size={18} className="animate-spin mr-2" />
+                  )}
                   Confirm Booking
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -639,12 +649,13 @@ export default function QuickBookWizard({
                   confirmation email once approved.
                 </p>
               </div>
-              <button
+              <Button
                 onClick={handleClose}
-                className="px-8 py-3 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors"
+                className="px-12 py-6 text-lg font-bold"
+                size="lg"
               >
                 Done
-              </button>
+              </Button>
             </div>
           )}
         </div>

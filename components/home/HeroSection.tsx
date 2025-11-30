@@ -4,6 +4,7 @@ import { useState } from "react";
 import EditableText from "@/components/admin/EditableText";
 import EditableImage from "@/components/admin/EditableImage";
 import QuickBookWizard from "@/components/booking/QuickBookWizard";
+import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
@@ -42,12 +43,13 @@ export default function HeroSection() {
             initialValue="Expert driving instruction for all ages and skill levels"
           />
         </p>
-        <button
+        <Button
           onClick={() => setIsWizardOpen(true)}
-          className="inline-block bg-(--primary) text-(--primary-foreground) px-12 py-4 text-lg hover:opacity-90 transition-opacity font-bold tracking-wide"
+          size="lg"
+          className="px-12 py-8 text-lg font-bold tracking-wide"
         >
           Book a lesson
-        </button>
+        </Button>
       </div>
 
       <QuickBookWizard
