@@ -70,6 +70,11 @@ export default function QuickBookWizard({
   } | null>(null);
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [adminSettings, setAdminSettings] = useState<{
+    workingHours: { start: string; end: string };
+    workingDays: number[];
+    vacations: string[];
+  } | null>(null);
 
   // Fetch packages on open
   useEffect(() => {
@@ -81,14 +86,18 @@ export default function QuickBookWizard({
   const loadPackageData = async () => {
     try {
       setLoading(true);
-      const [packages, userPkgs] = await Promise.all([
+      const [packages, userPkgs, settingsResult] = await Promise.all([
         packageService.getActivePackages(),
         user
           ? userPackageService.getUserPackages(user.uid)
           : Promise.resolve([]),
+        getAdminSettings(),
       ]);
       setAvailablePackages(packages);
       setUserPackages(userPkgs.filter((p) => p.remainingHours > 0));
+      if (settingsResult.success && settingsResult.data) {
+        setAdminSettings(settingsResult.data);
+      }
     } catch (error) {
       console.error("Error loading packages:", error);
     } finally {
@@ -113,66 +122,69 @@ export default function QuickBookWizard({
     return slots;
   };
 
-  const loadAvailability = useCallback(async (date: Date) => {
-    setLoading(true);
-    try {
-      const settingsResult = await getAdminSettings();
-      if (!settingsResult.success || !settingsResult.data) return;
+  const loadAvailability = useCallback(
+    async (date: Date) => {
+      setLoading(true);
+      try {
+        if (!adminSettings) return;
 
-      const { workingHours, workingDays, vacations } = settingsResult.data;
-      const dayOfWeek = date.getDay();
+        const { workingHours, workingDays, vacations } = adminSettings;
+        const dayOfWeek = date.getDay();
 
-      if (!workingDays.includes(dayOfWeek)) {
-        setTimeSlots([]);
-        return;
+        if (!workingDays.includes(dayOfWeek)) {
+          setTimeSlots([]);
+          return;
+        }
+
+        const dateStr = date.toISOString().split("T")[0];
+        if (vacations.includes(dateStr)) {
+          setTimeSlots([]);
+          return;
+        }
+
+        const slots = generateTimeSlots(workingHours.start, workingHours.end);
+        const timeMin = new Date(date);
+        timeMin.setHours(0, 0, 0, 0);
+        const timeMax = new Date(date);
+        timeMax.setHours(23, 59, 59, 999);
+
+        const availabilityResult = await checkAvailabilityAction(
+          timeMin.toISOString(),
+          timeMax.toISOString()
+        );
+
+        if (availabilityResult.success && availabilityResult.data) {
+          const busySlots = availabilityResult.data;
+          const updatedSlots = slots.map((slot) => {
+            const slotStart = new Date(date);
+            const [hours, minutes] = slot.originalTime.split(":").map(Number);
+            slotStart.setHours(hours, minutes, 0, 0);
+            const slotEnd = new Date(slotStart);
+            slotEnd.setHours(hours + 1, minutes, 0, 0);
+
+            const isOverlapping = busySlots.some(
+              (busy: { start?: string | null; end?: string | null }) => {
+                if (!busy.start || !busy.end) return false;
+                const busyStart = new Date(busy.start);
+                const busyEnd = new Date(busy.end);
+                return slotStart < busyEnd && slotEnd > busyStart;
+              }
+            );
+
+            return { ...slot, available: !isOverlapping };
+          });
+          setTimeSlots(updatedSlots);
+        } else {
+          setTimeSlots(slots);
+        }
+      } catch (error) {
+        console.error("Error loading availability:", error);
+      } finally {
+        setLoading(false);
       }
-
-      const dateStr = date.toISOString().split("T")[0];
-      if (vacations.includes(dateStr)) {
-        setTimeSlots([]);
-        return;
-      }
-
-      const slots = generateTimeSlots(workingHours.start, workingHours.end);
-      const timeMin = new Date(date);
-      timeMin.setHours(0, 0, 0, 0);
-      const timeMax = new Date(date);
-      timeMax.setHours(23, 59, 59, 999);
-
-      const availabilityResult = await checkAvailabilityAction(
-        timeMin.toISOString(),
-        timeMax.toISOString()
-      );
-
-      if (availabilityResult.success && availabilityResult.data) {
-        const busySlots = availabilityResult.data;
-        const updatedSlots = slots.map((slot) => {
-          const slotStart = new Date(date);
-          const [hours, minutes] = slot.originalTime.split(":").map(Number);
-          slotStart.setHours(hours, minutes, 0, 0);
-          const slotEnd = new Date(slotStart);
-          slotEnd.setHours(hours + 1, minutes, 0, 0);
-
-          const isOverlapping = busySlots.some(
-            (busy: { start: string; end: string }) => {
-              const busyStart = new Date(busy.start);
-              const busyEnd = new Date(busy.end);
-              return slotStart < busyEnd && slotEnd > busyStart;
-            }
-          );
-
-          return { ...slot, available: !isOverlapping };
-        });
-        setTimeSlots(updatedSlots);
-      } else {
-        setTimeSlots(slots);
-      }
-    } catch (error) {
-      console.error("Error loading availability:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [adminSettings]
+  );
 
   useEffect(() => {
     if (selectedDate && currentStep === "calendar") {

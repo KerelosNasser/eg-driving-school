@@ -1,6 +1,7 @@
 'use server';
 
 import { calendarService } from '@/lib/services/calendar.service';
+import { userPackageServerService } from '@/lib/services/server/user-package.server';
 
 export async function listEventsAction(calendarId = 'primary') {
   try {
@@ -71,6 +72,7 @@ export async function bookAppointmentAction(bookingDetails: {
   date: string; // YYYY-MM-DD
   timeSlots: string[]; // ["10:00", "11:00"]
   location?: string;
+  userPackageId?: string;
 }) {
   try {
     // Fetch calendar ID from settings
@@ -87,46 +89,14 @@ export async function bookAppointmentAction(bookingDetails: {
     const usersSnapshot = await adminDb.collection('users').where('email', '==', bookingDetails.customerEmail).limit(1).get();
     
     if (!usersSnapshot.empty) {
-      const userDoc = usersSnapshot.docs[0];
-      const userId = userDoc.id;
+      const userId = usersSnapshot.docs[0].id;
+      const hoursToDeduct = bookingDetails.timeSlots.length;
       
-      // 2. Find active package with remaining hours
-      const packagesSnapshot = await adminDb.collection('user_packages')
-        .where('userId', '==', userId)
-        .where('active', '==', true)
-        .where('remainingHours', '>', 0)
-        .orderBy('remainingHours', 'desc') // Use package with most hours first? Or expiry? Let's just pick one.
-        .limit(1)
-        .get();
-
-      if (!packagesSnapshot.empty) {
-        const packageDoc = packagesSnapshot.docs[0];
-        const packageData = packageDoc.data();
-        const hoursToDeduct = bookingDetails.timeSlots.length; // Assuming 1 hour per slot
-        
-        if (packageData.remainingHours >= hoursToDeduct) {
-          console.log(`[Calendar Action] Deducting ${hoursToDeduct} hours from package ${packageDoc.id}`);
-          await packageDoc.ref.update({
-            remainingHours: packageData.remainingHours - hoursToDeduct,
-            updatedAt: new Date().toISOString()
-          });
-        } else {
-            // Not enough hours. 
-            // Option 1: Fail booking
-            // Option 2: Deduct what's possible and warn?
-            // Option 3: Proceed but don't deduct (pay manually for rest?)
-            // For now, let's log a warning but proceed with booking (maybe they pay difference).
-            // Ideally we should prompt user, but this is a server action called after UI selection.
-            console.warn(`[Calendar Action] User has package but not enough hours. Required: ${hoursToDeduct}, Available: ${packageData.remainingHours}`);
-            // We could deduct all remaining and leave 0?
-            // Let's deduct all remaining for now.
-             await packageDoc.ref.update({
-                remainingHours: 0,
-                updatedAt: new Date().toISOString()
-              });
-        }
-      } else {
-          console.log(`[Calendar Action] No active package found for user ${userId}. Proceeding with standard booking.`);
+      try {
+        await userPackageServerService.deductPackageHours(userId, hoursToDeduct, bookingDetails.userPackageId);
+      } catch (error) {
+        console.error('[Calendar Action] Failed to deduct package hours:', error);
+        // Decide if we should block booking. For now, log and proceed as per previous behavior.
       }
     } else {
         console.log(`[Calendar Action] User not found for email ${bookingDetails.customerEmail}. Proceeding with standard booking.`);
