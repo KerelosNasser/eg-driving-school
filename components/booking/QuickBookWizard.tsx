@@ -591,7 +591,7 @@ export default function QuickBookWizard({
                             disabled={!slot.available}
                             className={`w-full p-3 rounded-lg transition-all ${
                               selectedSlot?.time === slot.time
-                                ? "bg-[var(--primary)] text-black font-semibold"
+                                ? "bg-(--primary) text-black font-semibold"
                                 : slot.available
                                 ? "bg-gray-50 hover:bg-gray-100 text-gray-900 border border-gray-200"
                                 : "bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100"
