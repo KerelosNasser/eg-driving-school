@@ -14,7 +14,6 @@ export default function HomePage() {
   return (
     <div className="bg-white font-sans">
       <HeroSection />
-      <CalendarSection />
       <PaymentSection />
       <AboutSection />
       <PriceListSection />

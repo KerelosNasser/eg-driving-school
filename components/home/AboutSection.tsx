@@ -28,7 +28,7 @@ export default function AboutSection() {
                <EditableImage
                  section="about"
                  field="instructorImage"
-                 initialSrc="/instructor.png"
+                 initialSrc="/instructor2.webp"
                  alt="Instructor Emeal"
                  width={800}
                  height={1000}

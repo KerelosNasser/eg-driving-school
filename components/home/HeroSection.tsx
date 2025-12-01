@@ -10,7 +10,8 @@ export default function HeroSection() {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   return (
-    <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+      {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <EditableImage
           section="home"
@@ -22,34 +23,42 @@ export default function HeroSection() {
           className="object-cover w-full h-full"
           priority
         />
-        <div className="absolute inset-0 bg-black/40" />
+        {/* Simple, clean overlay for text readability */}
+        <div className="absolute inset-0 bg-black/50" />
       </div>
 
-      <div className="container text-center relative z-10 px-4">
-        <h1
-          className="text-white font-bold mb-6 leading-tight max-w-5xl mx-auto"
-          style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)" }}
-        >
-          <EditableText
-            section="home"
-            field="heroTitle"
-            initialValue="Learn to Drive Safely and Confidently"
-          />
-        </h1>
-        <p className="text-white text-xl md:text-2xl mb-10 font-light max-w-3xl mx-auto">
-          <EditableText
-            section="home"
-            field="heroSubtitle"
-            initialValue="Expert driving instruction for all ages and skill levels"
-          />
-        </p>
-        <Button
-          onClick={() => setIsWizardOpen(true)}
-          size="lg"
-          className="px-12 py-8 text-lg font-bold tracking-wide"
-        >
-          Book a lesson
-        </Button>
+      {/* Main Content */}
+      <div className="container relative z-10 px-4 text-center">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <h1
+            className="text-white font-bold tracking-tight leading-tight drop-shadow-lg"
+            style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
+          >
+            <EditableText
+              section="home"
+              field="heroTitle"
+              initialValue="Learn to Drive Safely and Confidently"
+            />
+          </h1>
+
+          <p className="text-white text-lg md:text-2xl font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+            <EditableText
+              section="home"
+              field="heroSubtitle"
+              initialValue="Expert driving instruction for all ages and skill levels. Start your journey today."
+            />
+          </p>
+
+          <div className="pt-4">
+            <Button
+              onClick={() => setIsWizardOpen(true)}
+              size="lg"
+              className="bg-[#ffd600] text-black hover:bg-[#e6c200] px-10 py-7 text-xl font-bold rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
+            >
+              Book a Lesson
+            </Button>
+          </div>
+        </div>
       </div>
 
       <QuickBookWizard

@@ -185,14 +185,6 @@ export default function Header() {
             >
               Bio
             </Link>
-            <Link
-              href="/#calendar"
-              className="text-xl font-medium text-gray-300 hover:text-[var(--primary)]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Calendar
-            </Link>
-
             {/* Mobile User Profile / Join Us */}
             <button
               onClick={() => {
