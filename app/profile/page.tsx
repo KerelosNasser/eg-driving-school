@@ -126,49 +126,52 @@ export default function ProfilePage() {
                 background="transparent"
               />
             </div>
-          ) : userPackages.length > 0 ? (
+          ) : userPackages.filter((pkg) => pkg.remainingHours > 0).length >
+            0 ? (
             <div className="grid gap-4">
-              {userPackages.map((pkg) => (
-                <div
-                  key={pkg.id}
-                  className="bg-linear-to-r from-yellow-50 to-white border border-yellow-200 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6"
-                >
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {pkg.packageName}
-                    </h3>
-                    <div className="flex items-center gap-4 text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <Clock size={16} className="text-(--primary)" />
-                        <span>
-                          {pkg.remainingHours} / {pkg.totalHours} Hours
-                          Remaining
-                        </span>
+              {userPackages
+                .filter((pkg) => pkg.remainingHours > 0)
+                .map((pkg) => (
+                  <div
+                    key={pkg.id}
+                    className="bg-linear-to-r from-yellow-50 to-white border border-yellow-200 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6"
+                  >
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {pkg.packageName}
+                      </h3>
+                      <div className="flex items-center gap-4 text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <Clock size={16} className="text-(--primary)" />
+                          <span>
+                            {pkg.remainingHours} / {pkg.totalHours} Hours
+                            Remaining
+                          </span>
+                        </div>
+                      </div>
+                      {/* Progress Bar */}
+                      <div className="w-full max-w-md h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-(--primary)"
+                          style={{
+                            width: `${
+                              (pkg.remainingHours / pkg.totalHours) * 100
+                            }%`,
+                          }}
+                        />
                       </div>
                     </div>
-                    {/* Progress Bar */}
-                    <div className="w-full max-w-md h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-(--primary)"
-                        style={{
-                          width: `${
-                            (pkg.remainingHours / pkg.totalHours) * 100
-                          }%`,
-                        }}
-                      />
+                    <div className="self-end md:self-center">
+                      <Link
+                        href="/profile/calendar"
+                        className="flex items-center gap-2 px-6 py-3 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors shadow-sm"
+                      >
+                        <Calendar size={20} />
+                        Book Lesson
+                      </Link>
                     </div>
                   </div>
-                  <div className="self-end md:self-center">
-                    <Link
-                      href="/profile/calendar"
-                      className="flex items-center gap-2 px-6 py-3 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors shadow-sm"
-                    >
-                      <Calendar size={20} />
-                      Book Lesson
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           ) : (
             <div className="bg-gray-50 rounded-xl p-8 text-center border border-gray-200">

@@ -5,12 +5,12 @@
   --background: #ffffff;
   --foreground: #000000;
 
-  /* Primary Colors - Yellow/Black Theme */
+  /* Primary Colors - Yellow/white Theme */
   --primary: #ffd600;
-  --primary-foreground: #000000;
+  --primary-foreground: #ffffff;
 
   /* Secondary/Muted Colors */
-  --secondary: #f4f4f4;
+  --secondary: #000000;
   --secondary-foreground: #000000;
 
   /* Text Colors */

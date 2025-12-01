@@ -49,10 +49,10 @@ export default function UsersListTab() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold text-(--primary)">Users List</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Users List</h2>
         <div className="relative">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             size={18}
           />
           <input
@@ -60,7 +60,7 @@ export default function UsersListTab() {
             placeholder="Search users..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-64 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-white placeholder:text-white/30 focus:outline-none focus:border-(--primary) transition-colors"
+            className="w-full md:w-64 bg-white border border-gray-300 rounded-lg pl-10 pr-4 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-(--primary) transition-colors"
           />
         </div>
       </div>
@@ -74,42 +74,42 @@ export default function UsersListTab() {
           {error}
         </div>
       ) : (
-        <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-white/5 border-b border-white/10">
-                  <th className="px-6 py-4 text-sm font-semibold text-white/60">
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="px-6 py-4 text-sm font-semibold text-gray-600">
                     User
                   </th>
-                  <th className="px-6 py-4 text-sm font-semibold text-white/60">
+                  <th className="px-6 py-4 text-sm font-semibold text-gray-600">
                     Contact
                   </th>
-                  <th className="px-6 py-4 text-sm font-semibold text-white/60">
+                  <th className="px-6 py-4 text-sm font-semibold text-gray-600">
                     Role
                   </th>
-                  <th className="px-6 py-4 text-sm font-semibold text-white/60">
+                  <th className="px-6 py-4 text-sm font-semibold text-gray-600">
                     Joined
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-gray-100">
                 {filteredUsers.length > 0 ? (
                   filteredUsers.map((user) => (
                     <tr
                       key={user.uid}
-                      className="hover:bg-white/5 transition-colors"
+                      className="hover:bg-gray-50 transition-colors"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-(--primary)/20 flex items-center justify-center text-(--primary)">
+                          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
                             <UserIcon size={18} />
                           </div>
                           <div>
-                            <div className="font-medium text-white">
+                            <div className="font-medium text-gray-900">
                               {user.displayName}
                             </div>
-                            <div className="text-xs text-white/40 font-mono">
+                            <div className="text-xs text-gray-400 font-mono">
                               {user.uid.slice(0, 8)}...
                             </div>
                           </div>
@@ -117,13 +117,13 @@ export default function UsersListTab() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm text-white/80">
-                            <Mail size={14} className="text-white/40" />
+                          <div className="flex items-center gap-2 text-sm text-gray-700">
+                            <Mail size={14} className="text-gray-400" />
                             {user.email}
                           </div>
                           {user.phoneNumber && (
-                            <div className="flex items-center gap-2 text-sm text-white/80">
-                              <Phone size={14} className="text-white/40" />
+                            <div className="flex items-center gap-2 text-sm text-gray-700">
+                              <Phone size={14} className="text-gray-400" />
                               {user.phoneNumber}
                             </div>
                           )}
@@ -142,7 +142,7 @@ export default function UsersListTab() {
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-sm text-white/60">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Calendar size={14} />
                           {new Date(user.createdAt).toLocaleDateString()}
                         </div>
@@ -153,16 +153,16 @@ export default function UsersListTab() {
                   <tr>
                     <td
                       colSpan={4}
-                      className="px-6 py-12 text-center text-white/40"
+                      className="px-6 py-12 text-center text-gray-400"
                     >
-                      No users found matching "{searchTerm}"
+                      No users found matching &quot;{searchTerm}&quot;
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-4 border-t border-white/10 bg-white/5 text-xs text-white/40 flex justify-between">
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 text-xs text-gray-500 flex justify-between">
             <span>
               Showing {filteredUsers.length} of {users.length} users
             </span>

@@ -114,10 +114,10 @@ export function TierListTab() {
       {/* Tiers Section */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white">Tiers</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Tiers</h2>
           <button
             onClick={() => setShowTierForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors"
           >
             <Plus size={20} /> Add Tier
           </button>
@@ -126,7 +126,7 @@ export function TierListTab() {
         {showTierForm && (
           <form
             onSubmit={handleCreateTier}
-            className="bg-white/5 p-6 rounded-xl space-y-4 border border-white/10"
+            className="bg-gray-50 p-6 rounded-xl space-y-4 border border-gray-200"
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input
@@ -136,7 +136,7 @@ export function TierListTab() {
                 onChange={(e) =>
                   setNewTier({ ...newTier, name: e.target.value })
                 }
-                className="bg-black/50 border border-white/10 rounded-lg p-3 text-white"
+                className="bg-white border border-gray-300 rounded-lg p-3 text-gray-900"
                 required
               />
               <input
@@ -167,7 +167,7 @@ export function TierListTab() {
               <button
                 type="button"
                 onClick={() => setShowTierForm(false)}
-                className="px-4 py-2 text-white/60 hover:text-white"
+                className="px-4 py-2 text-gray-500 hover:text-gray-900"
               >
                 Cancel
               </button>
@@ -185,11 +185,11 @@ export function TierListTab() {
           {tiers.map((tier) => (
             <div
               key={tier.id}
-              className="bg-white/5 border border-white/10 rounded-xl p-4 flex justify-between items-center"
+              className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex justify-between items-center"
             >
               <div>
-                <h3 className="text-lg font-bold text-white">{tier.name}</h3>
-                <p className="text-white/60 text-sm">
+                <h3 className="text-lg font-bold text-gray-900">{tier.name}</h3>
+                <p className="text-gray-600 text-sm">
                   {tier.discountPercentage}% Discount • Rank {tier.rank}
                 </p>
               </div>
@@ -207,10 +207,10 @@ export function TierListTab() {
       {/* Invitation Codes Section */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white">Invitation Codes</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Invitation Codes</h2>
           <button
             onClick={() => setShowCodeForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors"
           >
             <Plus size={20} /> Generate Code
           </button>
@@ -219,7 +219,7 @@ export function TierListTab() {
         {showCodeForm && (
           <form
             onSubmit={handleCreateCode}
-            className="bg-white/5 p-6 rounded-xl space-y-4 border border-white/10"
+            className="bg-gray-50 p-6 rounded-xl space-y-4 border border-gray-200"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
@@ -229,7 +229,7 @@ export function TierListTab() {
                 onChange={(e) =>
                   setNewCode({ ...newCode, code: e.target.value.toUpperCase() })
                 }
-                className="bg-black/50 border border-white/10 rounded-lg p-3 text-white"
+                className="bg-white border border-gray-300 rounded-lg p-3 text-gray-900"
                 required
               />
               <select
@@ -237,7 +237,7 @@ export function TierListTab() {
                 onChange={(e) =>
                   setNewCode({ ...newCode, tierId: e.target.value })
                 }
-                className="bg-black/50 border border-white/10 rounded-lg p-3 text-white"
+                className="bg-white border border-gray-300 rounded-lg p-3 text-gray-900"
                 required
               >
                 <option value="">Select Tier</option>
@@ -252,7 +252,7 @@ export function TierListTab() {
               <button
                 type="button"
                 onClick={() => setShowCodeForm(false)}
-                className="px-4 py-2 text-white/60 hover:text-white"
+                className="px-4 py-2 text-gray-500 hover:text-gray-900"
               >
                 Cancel
               </button>
@@ -272,21 +272,21 @@ export function TierListTab() {
             return (
               <div
                 key={code.id}
-                className="bg-white/5 border border-white/10 rounded-xl p-4 flex justify-between items-center"
+                className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex justify-between items-center"
               >
                 <div>
                   <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-bold text-white font-mono">
+                    <h3 className="text-lg font-bold text-gray-900 font-mono">
                       {code.code}
                     </h3>
                     <button
                       onClick={() => copyCode(code.code)}
-                      className="text-white/40 hover:text-white"
+                      className="text-gray-400 hover:text-gray-900"
                     >
                       <Copy size={14} />
                     </button>
                   </div>
-                  <p className="text-white/60 text-sm">
+                  <p className="text-gray-600 text-sm">
                     {tier?.name || "Unknown Tier"} • Used {code.usageCount}{" "}
                     times
                   </p>

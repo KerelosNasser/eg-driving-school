@@ -37,11 +37,11 @@ export default function AnnouncementsTab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-(--primary)">Announcements</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Announcements</h2>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <p className="text-white/60 mb-6">
+      <div className="bg-gray-100 border border-gray-200 rounded-xl p-6">
+        <p className="text-gray-600 mb-6">
           Send an email announcement to all registered users. Please use this
           feature responsibly.
         </p>
@@ -54,7 +54,7 @@ export default function AnnouncementsTab() {
           <div className="space-y-2">
             <label
               htmlFor="subject"
-              className="block text-sm font-medium text-white/80"
+              className="block text-sm font-medium text-gray-700"
             >
               Email Subject
             </label>
@@ -64,14 +64,14 @@ export default function AnnouncementsTab() {
               name="subject"
               required
               placeholder="e.g., Important Update: New Packages Available"
-              className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-(--primary) transition-colors"
+              className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-(--primary) transition-colors"
             />
           </div>
 
           <div className="space-y-2">
             <label
               htmlFor="message"
-              className="block text-sm font-medium text-white/80"
+              className="block text-sm font-medium text-gray-700"
             >
               Message Body (HTML supported)
             </label>
@@ -81,9 +81,9 @@ export default function AnnouncementsTab() {
               required
               rows={8}
               placeholder="<p>Dear Students,</p><p>We are excited to announce...</p>"
-              className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-(--primary) transition-colors font-mono text-sm"
+              className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-(--primary) transition-colors font-mono text-sm"
             />
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-gray-500">
               You can use basic HTML tags for formatting.
             </p>
           </div>
@@ -106,7 +106,7 @@ export default function AnnouncementsTab() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-3 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-6 py-3 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
