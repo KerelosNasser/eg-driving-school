@@ -33,7 +33,7 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
 
   if (payments.length === 0) {
     return (
-      <div className="text-center py-12 text-white/40 bg-white/5 rounded-xl border border-white/5">
+      <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-gray-200">
         No payment history found.
       </div>
     );
@@ -44,32 +44,35 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
       {payments.map((payment) => (
         <div
           key={payment.id}
-          className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-colors"
+          className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:border-[var(--primary)] transition-colors"
         >
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <span className="text-xl font-bold text-white">
+                <span className="text-xl font-bold text-gray-900">
                   ${payment.amount.toFixed(2)}
                 </span>
                 {getStatusBadge(payment.status)}
               </div>
 
-              <div className="text-white/60 text-sm space-y-1">
+              <div className="text-gray-600 text-sm space-y-1">
                 <p>
-                  Ref: <span className="text-white">{payment.referenceId}</span>
+                  Ref:{" "}
+                  <span className="text-gray-900 font-mono">
+                    {payment.referenceId}
+                  </span>
                 </p>
                 {payment.packageName && (
                   <p>
                     Package:{" "}
-                    <span className="text-white">{payment.packageName}</span>
+                    <span className="text-gray-900">{payment.packageName}</span>
                   </p>
                 )}
                 <p>Date: {new Date(payment.createdAt).toLocaleDateString()}</p>
               </div>
 
               {payment.notes && (
-                <div className="text-white/60 text-sm bg-white/5 p-2 rounded mt-2">
+                <div className="text-gray-600 text-sm bg-white p-2 rounded border border-gray-200 mt-2">
                   Note: {payment.notes}
                 </div>
               )}

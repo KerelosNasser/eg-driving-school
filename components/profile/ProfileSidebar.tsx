@@ -70,7 +70,7 @@ export function ProfileSidebar() {
 
   return (
     <div className="w-full md:w-64 shrink-0">
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sticky top-24">
+      <div className="bg-white border border-gray-200 rounded-2xl p-4 sticky top-24 shadow-sm">
         <nav className="space-y-2">
           {links.map((link) => {
             const isActive = link.exact
@@ -84,8 +84,8 @@ export function ProfileSidebar() {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
                   isActive
-                    ? "bg-(--primary) text-black font-bold shadow-[0_0_20px_rgba(255,214,0,0.2)]"
-                    : "text-white/60 hover:text-white hover:bg-white/10"
+                    ? "bg-(--primary) text-black font-bold shadow-md"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 )}
               >
                 <link.icon size={20} />
@@ -94,10 +94,10 @@ export function ProfileSidebar() {
             );
           })}
 
-          <div className="pt-4 mt-4 border-t border-white/10">
+          <div className="pt-4 mt-4 border-t border-gray-200">
             <button
               onClick={() => signOut()}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogOut size={20} />
               Sign Out

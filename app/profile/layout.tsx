@@ -22,8 +22,8 @@ export default function ProfileLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-900">
+        <Loader2 className="w-8 h-8 animate-spin text-(--primary)" />
       </div>
     );
   }
@@ -33,7 +33,7 @@ export default function ProfileLayout({
   }
 
   return (
-    <div className="min-h-screen bg-black text-white pt-24 pb-12 px-4">
+    <div className="min-h-screen bg-gray-50 text-gray-900 pt-24 pb-12 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
           <ProfileSidebar />

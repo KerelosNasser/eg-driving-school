@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { UserPackage } from "@/types/user-package";
 import { userPackageService } from "@/lib/services/user-package-service";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import Link from "next/link";
 
 export default function ProfilePage() {
@@ -51,7 +52,7 @@ export default function ProfilePage() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 border-b border-gray-100 pb-8">
         <div className="flex items-center gap-6">
-          <div className="w-24 h-24 rounded-full bg-[var(--primary)] flex items-center justify-center text-black text-3xl font-bold shadow-lg">
+          <div className="w-24 h-24 rounded-full bg-(--primary) flex items-center justify-center text-black text-3xl font-bold shadow-lg">
             {profile.firstName?.charAt(0) || user?.email?.charAt(0)}
           </div>
           <div>
@@ -77,7 +78,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/profile/calendar"
-              className="flex flex-col items-center justify-center gap-3 p-6 bg-[var(--primary)] text-black rounded-xl hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg group"
+              className="flex flex-col items-center justify-center gap-3 p-6 bg-(--primary) text-black rounded-xl hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg group"
             >
               <div className="w-12 h-12 rounded-full bg-black/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Calendar size={24} />
@@ -117,13 +118,20 @@ export default function ProfilePage() {
             My Active Packages
           </h2>
           {loadingPackages ? (
-            <div className="text-gray-400">Loading packages...</div>
+            <div className="h-40 relative">
+              <LoadingIndicator
+                fullscreen={false}
+                size="sm"
+                message="Loading your packages..."
+                background="transparent"
+              />
+            </div>
           ) : userPackages.length > 0 ? (
             <div className="grid gap-4">
               {userPackages.map((pkg) => (
                 <div
                   key={pkg.id}
-                  className="bg-gradient-to-r from-yellow-50 to-white border border-yellow-200 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6"
+                  className="bg-linear-to-r from-yellow-50 to-white border border-yellow-200 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6"
                 >
                   <div className="space-y-2">
                     <h3 className="text-xl font-bold text-gray-900">
@@ -131,7 +139,7 @@ export default function ProfilePage() {
                     </h3>
                     <div className="flex items-center gap-4 text-gray-600">
                       <div className="flex items-center gap-2">
-                        <Clock size={16} className="text-[var(--primary)]" />
+                        <Clock size={16} className="text-(--primary)" />
                         <span>
                           {pkg.remainingHours} / {pkg.totalHours} Hours
                           Remaining
@@ -141,7 +149,7 @@ export default function ProfilePage() {
                     {/* Progress Bar */}
                     <div className="w-full max-w-md h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-[var(--primary)]"
+                        className="h-full bg-(--primary)"
                         style={{
                           width: `${
                             (pkg.remainingHours / pkg.totalHours) * 100
@@ -153,7 +161,7 @@ export default function ProfilePage() {
                   <div className="self-end md:self-center">
                     <Link
                       href="/profile/calendar"
-                      className="flex items-center gap-2 px-6 py-3 bg-[var(--primary)] text-black font-bold rounded-lg hover:opacity-90 transition-colors shadow-sm"
+                      className="flex items-center gap-2 px-6 py-3 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors shadow-sm"
                     >
                       <Calendar size={20} />
                       Book Lesson
@@ -169,7 +177,7 @@ export default function ProfilePage() {
               </p>
               <Link
                 href="/profile/packages"
-                className="inline-block px-6 py-2 bg-[var(--primary)] text-black font-bold rounded-lg hover:opacity-90 transition-colors shadow-sm"
+                className="inline-block px-6 py-2 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors shadow-sm"
               >
                 Browse Packages
               </Link>
@@ -237,7 +245,7 @@ export default function ProfilePage() {
               <div>
                 <p className="text-sm text-gray-500">Invitation Code</p>
                 <div className="flex items-center gap-3">
-                  <p className="font-mono text-xl font-bold tracking-wider text-[var(--primary)]">
+                  <p className="font-mono text-xl font-bold tracking-wider text-(--primary)">
                     {profile.invitationCode}
                   </p>
                   <button
@@ -262,13 +270,13 @@ export default function ProfilePage() {
                 </h3>
                 <button
                   onClick={() => router.push("/profile/packages")}
-                  className="w-full py-3 bg-[var(--primary)] text-black font-bold rounded-lg hover:opacity-90 transition-colors mb-2 shadow-sm"
+                  className="w-full py-3 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors mb-2 shadow-sm"
                 >
                   Manage Packages
                 </button>
                 <button
                   onClick={() => router.push("/admin")}
-                  className="w-full py-3 bg-[var(--primary)] text-black font-bold rounded-lg hover:opacity-90 transition-colors shadow-sm"
+                  className="w-full py-3 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors shadow-sm"
                 >
                   Access Admin Dashboard
                 </button>
@@ -295,7 +303,7 @@ export default function ProfilePage() {
                   onClick={() => updateProfile({ role: "admin" })}
                   className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
                     isAdmin
-                      ? "bg-[var(--primary)] text-black shadow-sm"
+                      ? "bg-(--primary) text-black shadow-sm"
                       : "text-gray-500 hover:text-gray-900"
                   }`}
                 >

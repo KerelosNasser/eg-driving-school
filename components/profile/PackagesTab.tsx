@@ -19,6 +19,7 @@ import { userPackageService } from "@/lib/services/user-package-service";
 import { PackageModal } from "./PackageModal";
 import { CheckoutModal } from "@/components/checkout/CheckoutModal";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 
 export function PackagesTab() {
   const { profile, user } = useAuth();
@@ -110,7 +111,15 @@ export function PackagesTab() {
   };
 
   if (loading) {
-    return <div className="text-white/60">Loading packages...</div>;
+    return (
+      <div className="h-64 relative">
+        <LoadingIndicator
+          fullscreen={false}
+          message="Loading packages..."
+          background="transparent"
+        />
+      </div>
+    );
   }
 
   return (
@@ -118,7 +127,7 @@ export function PackagesTab() {
       {/* User's Active Packages */}
       {!isAdmin && userPackages.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-white">My Packages</h2>
+          <h2 className="text-2xl font-bold text-gray-900">My Packages</h2>
           <div className="grid gap-4">
             {userPackages.map((pkg) => (
               <div
@@ -126,10 +135,10 @@ export function PackagesTab() {
                 className="bg-linear-to-r from-(--primary)/20 to-transparent border border-(--primary)/30 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6"
               >
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-xl font-bold text-gray-900">
                     {pkg.packageName}
                   </h3>
-                  <div className="flex items-center gap-4 text-white/80">
+                  <div className="flex items-center gap-4 text-gray-600">
                     <div className="flex items-center gap-2">
                       <Clock size={16} className="text-(--primary)" />
                       <span>
@@ -138,7 +147,7 @@ export function PackagesTab() {
                     </div>
                   </div>
                   {/* Progress Bar */}
-                  <div className="w-full max-w-md h-2 bg-black/40 rounded-full overflow-hidden">
+                  <div className="w-full max-w-md h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-(--primary)"
                       style={{
@@ -152,7 +161,7 @@ export function PackagesTab() {
                 <div className="self-end md:self-center">
                   <Link
                     href="/profile/calendar"
-                    className="flex items-center gap-2 px-6 py-3 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors"
                   >
                     <Calendar size={20} />
                     Book Lesson
@@ -166,11 +175,13 @@ export function PackagesTab() {
 
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white">Available Packages</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Available Packages
+          </h2>
           {isAdmin && (
             <button
               onClick={handleCreate}
-              className="flex items-center gap-2 px-4 py-2 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors"
             >
               <Plus size={20} />
               Add Package
@@ -189,11 +200,13 @@ export function PackagesTab() {
           {packages.map((pkg) => (
             <div
               key={pkg.id}
-              className="bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6 hover:border-white/20 transition-colors"
+              className="bg-gray-50 border border-gray-200 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6 hover:border-(--primary) transition-colors"
             >
               <div className="space-y-2 flex-1">
                 <div className="flex items-start justify-between md:justify-start gap-4">
-                  <h3 className="text-xl font-bold text-white">{pkg.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {pkg.name}
+                  </h3>
                   <div className="flex gap-2">
                     {pkg.isTestPackage && (
                       <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full border border-blue-500/30">
@@ -213,14 +226,14 @@ export function PackagesTab() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 text-white/60 text-sm">
+                <div className="flex items-center gap-4 text-gray-500 text-sm">
                   <span>${pkg.price}</span>
                   <span>•</span>
                   <span>{pkg.hours} Hours</span>
                 </div>
 
                 {pkg.description && (
-                  <p className="text-white/60 text-sm">{pkg.description}</p>
+                  <p className="text-gray-500 text-sm">{pkg.description}</p>
                 )}
 
                 {pkg.warning && (
@@ -235,14 +248,14 @@ export function PackagesTab() {
                   <>
                     <button
                       onClick={() => handleEdit(pkg)}
-                      className="p-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-colors"
+                      className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
                       title="Edit"
                     >
                       <Pencil size={18} />
                     </button>
                     <button
                       onClick={() => handleDelete(pkg.id)}
-                      className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors"
+                      className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors"
                       title="Delete"
                     >
                       <Trash2 size={18} />
@@ -251,7 +264,7 @@ export function PackagesTab() {
                 ) : (
                   <button
                     onClick={() => handleBuy(pkg)}
-                    className="px-6 py-2 bg-[var(--primary)] text-black font-bold rounded-lg hover:bg-white transition-colors"
+                    className="px-6 py-2 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors"
                   >
                     Buy Now
                   </button>
@@ -261,7 +274,7 @@ export function PackagesTab() {
           ))}
 
           {packages.length === 0 && (
-            <div className="text-center py-12 text-white/40 bg-white/5 rounded-xl border border-white/5">
+            <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-gray-200">
               {isAdmin
                 ? "No packages found. Create one to get started."
                 : "No active packages available at the moment."}

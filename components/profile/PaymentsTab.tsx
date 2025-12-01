@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { Payment, CreatePaymentInput } from "@/types/payment";
 import { paymentService } from "@/lib/services/payment-service";
-import { Loader2, Plus, AlertCircle } from "lucide-react";
+import { Plus, AlertCircle } from "lucide-react";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { PaymentHistory } from "./PaymentHistory";
 import { AdminPaymentPanel } from "./AdminPaymentPanel";
 import { RecordPaymentModal } from "./RecordPaymentModal";
@@ -59,8 +60,12 @@ export function PaymentsTab() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-12">
-        <Loader2 className="animate-spin text-white/40" size={32} />
+      <div className="h-64 relative">
+        <LoadingIndicator
+          fullscreen={false}
+          message="Loading payments..."
+          background="transparent"
+        />
       </div>
     );
   }
@@ -69,10 +74,10 @@ export function PaymentsTab() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-2xl font-bold text-gray-900">
             {isAdmin ? "Payment Approvals" : "Payment History"}
           </h2>
-          <p className="text-white/60 text-sm mt-1">
+          <p className="text-gray-500 text-sm mt-1">
             {isAdmin
               ? "Manage and approve user payments"
               : "View your transaction history and record new payments"}
@@ -82,7 +87,7 @@ export function PaymentsTab() {
         {!isAdmin && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-(--primary) text-black font-bold rounded-lg hover:opacity-90 transition-colors"
           >
             <Plus size={20} />
             Record Payment

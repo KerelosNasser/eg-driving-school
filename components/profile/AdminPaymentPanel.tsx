@@ -49,7 +49,7 @@ export function AdminPaymentPanel({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white">Payment Requests</h2>
+      <h2 className="text-2xl font-bold text-gray-900">Payment Requests</h2>
 
       {error && (
         <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-lg flex items-center gap-2">
@@ -62,11 +62,11 @@ export function AdminPaymentPanel({
         {payments.map((payment) => (
           <div
             key={payment.id}
-            className="bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6"
+            className="bg-gray-50 border border-gray-200 rounded-xl p-6 flex flex-col md:flex-row justify-between gap-6"
           >
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-lg font-bold text-gray-900">
                   {payment.userName}
                 </h3>
                 <span
@@ -82,11 +82,11 @@ export function AdminPaymentPanel({
                 </span>
               </div>
 
-              <div className="text-white/60 text-sm space-y-1">
+              <div className="text-gray-600 text-sm space-y-1">
                 <p>Email: {payment.userEmail}</p>
                 <p>
                   Ref:{" "}
-                  <span className="text-white font-mono">
+                  <span className="text-gray-900 font-mono">
                     {payment.referenceId}
                   </span>
                 </p>
@@ -102,13 +102,13 @@ export function AdminPaymentPanel({
                     Code: {payment.invitationCode} (Discount Applied)
                   </p>
                 )}
-                <p className="text-xs text-white/40">
+                <p className="text-xs text-gray-400">
                   {new Date(payment.createdAt).toLocaleString()}
                 </p>
               </div>
 
               {payment.notes && (
-                <div className="bg-white/5 p-2 rounded text-sm text-white/80 mt-2">
+                <div className="bg-white p-2 rounded text-sm text-gray-600 border border-gray-200 mt-2">
                   Note: {payment.notes}
                 </div>
               )}
@@ -144,7 +144,7 @@ export function AdminPaymentPanel({
         ))}
 
         {payments.length === 0 && (
-          <div className="text-center py-12 text-white/40 bg-white/5 rounded-xl border border-white/5">
+          <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-gray-200">
             No payment requests found.
           </div>
         )}
@@ -152,10 +152,10 @@ export function AdminPaymentPanel({
 
       {/* Reject Modal */}
       {rejectModal.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#1a1a1a] border border-white/10 rounded-xl w-full max-w-md p-6 space-y-4">
-            <h3 className="text-xl font-bold text-white">Reject Payment</h3>
-            <p className="text-white/60 text-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white border border-gray-200 rounded-xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+            <h3 className="text-xl font-bold text-gray-900">Reject Payment</h3>
+            <p className="text-gray-500 text-sm">
               Please provide a reason for rejection (e.g., &quot;Funds not
               received&quot;).
             </p>
@@ -164,7 +164,7 @@ export function AdminPaymentPanel({
               value={rejectNote}
               onChange={(e) => setRejectNote(e.target.value)}
               placeholder="Rejection reason..."
-              className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white h-24 focus:border-red-500/50 outline-none"
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-gray-900 h-24 focus:border-red-500 outline-none"
             />
 
             <div className="flex justify-end gap-2">
@@ -173,7 +173,7 @@ export function AdminPaymentPanel({
                   setRejectModal({ id: "", isOpen: false });
                   setRejectNote("");
                 }}
-                className="px-4 py-2 text-white/60 hover:text-white"
+                className="px-4 py-2 text-gray-500 hover:text-gray-900"
               >
                 Cancel
               </button>

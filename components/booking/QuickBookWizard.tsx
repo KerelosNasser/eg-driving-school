@@ -10,6 +10,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { packageService } from "@/lib/services/package-service";
 import { userPackageService } from "@/lib/services/user-package-service";
 import { paymentService } from "@/lib/services/payment-service";
@@ -296,7 +297,7 @@ export default function QuickBookWizard({
           disabled={isPast}
           className={`p-2 rounded-lg transition-all text-sm ${
             isSelected
-              ? "bg-[var(--primary)] text-black font-bold"
+              ? "bg-(--primary) text-black font-bold"
               : isToday
               ? "bg-blue-50 text-blue-600 font-semibold"
               : isPast
@@ -337,7 +338,17 @@ export default function QuickBookWizard({
         </div>
 
         {/* Content */}
-        <div className="p-4 md:p-6 overflow-y-auto flex-1">
+        <div className="p-4 md:p-6 overflow-y-auto flex-1 relative">
+          {loading && (
+            <div className="absolute inset-0 z-10 rounded-b-2xl overflow-hidden">
+              <LoadingIndicator
+                fullscreen={false}
+                message="Please wait..."
+                size="md"
+                background="rgba(255, 255, 255, 0.9)"
+              />
+            </div>
+          )}
           {/* Package Selection */}
           {currentStep === "package" && (
             <div className="space-y-6">
@@ -350,7 +361,7 @@ export default function QuickBookWizard({
                   {userPackages.map((pkg) => (
                     <label
                       key={pkg.id}
-                      className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-[var(--primary)] cursor-pointer transition-all"
+                      className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-(--primary) cursor-pointer transition-all"
                     >
                       <input
                         type="radio"
@@ -383,7 +394,7 @@ export default function QuickBookWizard({
                 {availablePackages.map((pkg) => (
                   <label
                     key={pkg.id}
-                    className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-[var(--primary)] cursor-pointer transition-all"
+                    className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-(--primary) cursor-pointer transition-all"
                   >
                     <input
                       type="radio"
@@ -442,7 +453,7 @@ export default function QuickBookWizard({
                 </p>
                 <p className="text-gray-900 mt-2">
                   Total:{" "}
-                  <span className="text-[var(--primary)] font-bold">
+                  <span className="text-(--primary) font-bold">
                     ${selectedPackage.price}
                   </span>
                 </p>
@@ -457,7 +468,7 @@ export default function QuickBookWizard({
                     type="text"
                     value={paymentReference}
                     onChange={(e) => setPaymentReference(e.target.value)}
-                    className="w-full mt-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:border-[var(--primary)]"
+                    className="w-full mt-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:border-(--primary)"
                     placeholder="e.g. PayID Ref or Receipt #"
                     required
                   />
@@ -470,7 +481,7 @@ export default function QuickBookWizard({
                   <textarea
                     value={paymentNotes}
                     onChange={(e) => setPaymentNotes(e.target.value)}
-                    className="w-full mt-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:border-[var(--primary)] min-h-[80px]"
+                    className="w-full mt-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:border-(--primary) min-h-[80px]"
                     placeholder="Any additional details..."
                   />
                 </label>
@@ -567,9 +578,7 @@ export default function QuickBookWizard({
                   </h3>
 
                   {loading ? (
-                    <div className="text-center py-8 text-gray-500">
-                      Loading...
-                    </div>
+                    <div className="h-64"></div>
                   ) : selectedDate ? (
                     <div className="space-y-2 max-h-96 overflow-y-auto">
                       {timeSlots.length === 0 ? (
