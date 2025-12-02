@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../components/booking/wizard/wizard-styles.css";
 
 :root {
   /* Target Theme Colors */
@@ -8,6 +9,8 @@
   /* Primary Colors - Yellow/white Theme */
   --primary: #ffd600;
   --primary-foreground: #ffffff;
+  --primary-light: hsl(47, 100%, 95%);
+  --primary-dark: hsl(47, 100%, 40%);
 
   /* Secondary/Muted Colors */
   --secondary: #000000;

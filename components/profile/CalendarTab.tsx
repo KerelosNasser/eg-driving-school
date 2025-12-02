@@ -6,15 +6,13 @@ import {
   updateAdminSettings,
   CalendarSettings,
 } from "@/app/actions/admin-settings.action";
-import { useAdmin } from "@/components/admin/AdminProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { AdminCalendarView } from "./calendar/AdminCalendarView";
 import { UserCalendarView } from "./calendar/UserCalendarView";
 
 export default function CalendarTab() {
-  const { isAdmin } = useAdmin();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const [settings, setSettings] = useState<CalendarSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -81,6 +79,12 @@ export default function CalendarTab() {
       </div>
     );
   }
+
+  if (!profile) {
+    return null;
+  }
+
+  const isAdmin = profile.role === "admin";
 
   return isAdmin ? (
     <AdminCalendarView
