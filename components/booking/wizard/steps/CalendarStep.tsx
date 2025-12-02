@@ -84,14 +84,14 @@ export const CalendarStep: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+    <div className="space-y-6">
       <div className="grid md:grid-cols-2 gap-6">
         {/* Calendar */}
         <div className="bg-linear-to-br from-white to-gray-50 border-2 border-gray-200 rounded-2xl p-5 shadow-sm">
           <div className="flex justify-between items-center mb-5">
             <button
               onClick={previousMonth}
-              className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-600 transition-all duration-200 hover:scale-110 active:scale-95"
+              className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-600 transition-colors duration-200"
             >
               <ChevronLeft size={20} />
             </button>
@@ -103,7 +103,7 @@ export const CalendarStep: React.FC = () => {
             </h3>
             <button
               onClick={nextMonth}
-              className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-600 transition-all duration-200 hover:scale-110 active:scale-95"
+              className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-600 transition-colors duration-200"
             >
               <ChevronRight size={20} />
             </button>
@@ -158,10 +158,9 @@ export const CalendarStep: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                timeSlots.map((slot, index) => (
+                timeSlots.map((slot) => (
                   <button
                     key={slot.time}
-                    style={{ animationDelay: `${index * 30}ms` }}
                     onClick={() =>
                       slot.available &&
                       setSelectedSlot({
@@ -172,13 +171,12 @@ export const CalendarStep: React.FC = () => {
                     }
                     disabled={!slot.available}
                     className={`
-                      w-full p-3.5 rounded-xl transition-all duration-200 font-medium text-sm
-                      animate-in fade-in slide-in-from-right-2
+                      w-full p-3.5 rounded-xl transition-colors duration-200 font-medium text-sm
                       ${
                         selectedSlot?.time === slot.time
-                          ? "bg-(--primary) text-black font-bold shadow-lg scale-105 ring-2 ring-(--primary) ring-offset-2"
+                          ? "bg-(--primary) text-black font-bold shadow-sm"
                           : slot.available
-                          ? "bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 hover:border-(--primary) hover:scale-102 hover:shadow-md"
+                          ? "bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 hover:border-(--primary)"
                           : "bg-gray-100 text-gray-400 cursor-not-allowed border-2 border-gray-100"
                       }
                     `}

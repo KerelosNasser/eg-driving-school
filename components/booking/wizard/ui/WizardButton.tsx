@@ -34,10 +34,7 @@ export const WizardButton: React.FC<WizardButtonProps> = ({
       {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
       {children}
 
-      {/* Shine effect */}
-      {!disabled && !loading && premium && (
-        <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent via-white/25 to-transparent z-10" />
-      )}
+      {/* Shine effect removed for performance */}
     </Button>
   );
 };

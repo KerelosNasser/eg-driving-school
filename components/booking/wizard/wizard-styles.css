@@ -113,8 +113,4 @@
   animation-delay: 200ms;
 }
 
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
+/* Shimmer removed for performance */

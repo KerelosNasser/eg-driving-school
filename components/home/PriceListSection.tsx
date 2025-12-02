@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+
 import { ArrowRight, Loader2 } from "lucide-react";
 import { packageService } from "@/lib/services/package-service";
 import { DrivingPackage } from "@/types/package";
+import QuickBookWizard from "@/components/booking/QuickBookWizard";
 
 export default function PriceListSection() {
   const [packages, setPackages] = useState<DrivingPackage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -81,8 +83,8 @@ export default function PriceListSection() {
               </div>
 
               <div className="mt-auto">
-                <Link
-                  href="/profile/packages"
+                <button
+                  onClick={() => setIsWizardOpen(true)}
                   className="w-full md:w-auto inline-flex items-center justify-center bg-black text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors gap-2 group"
                 >
                   Book Now
@@ -90,7 +92,7 @@ export default function PriceListSection() {
                     size={16}
                     className="group-hover:translate-x-1 transition-transform"
                   />
-                </Link>
+                </button>
               </div>
             </div>
           ))}
@@ -106,6 +108,11 @@ export default function PriceListSection() {
           Prices are subject to change without notice.
         </p>
       </div>
+
+      <QuickBookWizard
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+      />
     </section>
   );
 }

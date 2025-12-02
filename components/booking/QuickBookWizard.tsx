@@ -14,7 +14,12 @@ interface QuickBookWizardProps {
   preselectedPackageId?: string;
 }
 
-const WizardContent: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+interface WizardContentProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const WizardContent: React.FC<WizardContentProps> = ({ isOpen, onClose }) => {
   const { currentStep, setCurrentStep } = useWizard();
 
   const handleClose = useCallback(() => {
@@ -38,7 +43,11 @@ const WizardContent: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <WizardShell isOpen={true} onClose={handleClose} currentStep={currentStep}>
+    <WizardShell
+      isOpen={isOpen}
+      onClose={handleClose}
+      currentStep={currentStep}
+    >
       {renderStep()}
     </WizardShell>
   );
@@ -49,11 +58,10 @@ export default function QuickBookWizard({
   onClose,
   preselectedPackageId,
 }: QuickBookWizardProps) {
-  if (!isOpen) return null;
-
+  // Always render WizardProvider to allow data prefetching
   return (
     <WizardProvider onSuccess={onClose}>
-      <WizardContent onClose={onClose} />
+      <WizardContent isOpen={isOpen} onClose={onClose} />
     </WizardProvider>
   );
 }

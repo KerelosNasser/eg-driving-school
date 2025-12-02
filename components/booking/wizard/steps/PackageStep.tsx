@@ -39,7 +39,7 @@ export const PackageStep: React.FC = () => {
                 style={{
                   animationDelay: `${index * 50}ms`,
                 }}
-                className="group flex items-center gap-4 p-4 bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-xl hover:border-(--primary) cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 animate-in fade-in slide-in-from-left-2"
+                className="group flex items-center gap-4 p-4 bg-linear-to-br from-white to-gray-50 border-2 border-gray-200 rounded-xl hover:border-(--primary) cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 animate-in fade-in slide-in-from-left-2"
               >
                 <input
                   type="radio"
@@ -76,17 +76,17 @@ export const PackageStep: React.FC = () => {
       <div className="space-y-3">
         <h3 className="font-semibold text-gray-900 text-lg">Buy New Package</h3>
         <div className="grid gap-3 md:grid-cols-2">
-          {availablePackages.map((pkg, index) => (
+          {availablePackages.map((pkg) => (
             <label
               key={pkg.id}
-              style={{
-                animationDelay: `${(userPackages.length + index) * 50}ms`,
-              }}
-              className="group relative flex flex-col p-5 bg-gradient-to-br from-white via-gray-50 to-white border-2 border-gray-200 rounded-xl cursor-pointer transition-all duration-300 hover:border-(--primary) hover:shadow-xl hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-2 overflow-hidden"
+              className={`group relative flex flex-col p-5 bg-linear-to-br from-white via-gray-50 to-white border-2 border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:border-(--primary) hover:shadow-md
+                ${
+                  !useExistingPackage && selectedPackage?.id === pkg.id
+                    ? "border-(--primary) ring-2 ring-(--primary) ring-opacity-20 shadow-md"
+                    : "border-gray-200"
+                }
+              `}
             >
-              {/* Gradient overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-br from-(--primary) to-yellow-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
-
               <div className="relative flex items-start gap-3">
                 <input
                   type="radio"
@@ -95,7 +95,7 @@ export const PackageStep: React.FC = () => {
                     !useExistingPackage && selectedPackage?.id === pkg.id
                   }
                   onChange={() => handleSelectPackage(pkg)}
-                  className="mt-1 w-5 h-5 accent-(--primary) transition-transform duration-200 group-hover:scale-110"
+                  className="mt-1 w-5 h-5 accent-(--primary)"
                 />
                 <div className="flex-1">
                   <p className="font-bold text-gray-900 text-lg mb-1">
