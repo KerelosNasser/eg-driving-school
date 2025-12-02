@@ -3,10 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { CreditCard, Copy, Check, ArrowRight } from 'lucide-react';
+import QuickBookWizard from '@/components/booking/QuickBookWizard';
 
 export default function PaymentSection() {
   const [copied, setCopied] = useState(false);
   const payId = "0431512095";
+
+    const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(payId);
@@ -36,13 +39,14 @@ export default function PaymentSection() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <a 
-                href="https://calendar.app.google/XDUo3y47NbvDSCuS8" 
-                className="inline-flex items-center justify-center bg-black text-white px-8 py-4 text-lg font-bold rounded-full hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl group"
-              >
-                Book Now
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
+            <button
+              onClick={() => setIsWizardOpen(true)}
+              className="relative inline-flex items-center justify-center px-10 py-4 text-lg font-bold text-white bg-(--primary) rounded-full transition-transform hover:scale-105 active:scale-95 animate-glow w-full md:w-auto"
+            >
+              Book Now
+              {/* Glow effect layer */}
+              <span className="absolute inset-0 rounded-full bg-(--primary) blur-lg opacity-50 animate-pulse-glow -z-10"></span>
+            </button>
               <Link 
                 href="/pricing" 
                 className="inline-flex items-center justify-center bg-white text-black border-2 border-gray-100 px-8 py-4 text-lg font-bold rounded-full hover:border-black transition-all"
@@ -105,6 +109,7 @@ export default function PaymentSection() {
           
         </div>
       </div>
+      <QuickBookWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} />
     </section>
   );
 }
