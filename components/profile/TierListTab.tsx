@@ -2,12 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Trash2, AlertCircle, Copy } from "lucide-react";
-import {
-  Tier,
-  InvitationCode,
-  CreateTierInput,
-  CreateInvitationCodeInput,
-} from "@/types/tier";
+
 import { tierService } from "@/lib/services/tier-service";
 import { useAuth } from "@/components/providers/AuthProvider";
 

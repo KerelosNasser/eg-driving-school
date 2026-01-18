@@ -4,7 +4,6 @@ import React from "react";
 import { Package, ChevronRight } from "lucide-react";
 import { useWizard } from "../WizardContext";
 import { Button } from "@/components/ui/button";
-import { DrivingPackage } from "@/types/package";
 
 export const PackageStep: React.FC = () => {
   const {

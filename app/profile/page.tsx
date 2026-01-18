@@ -13,7 +13,7 @@ import {
   Package as UserPackageIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { UserPackage } from "@/types/user-package";
+
 import { userPackageService } from "@/lib/services/user-package-service";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import Link from "next/link";

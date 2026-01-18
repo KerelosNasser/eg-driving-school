@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
-import { CreatePackageInput, DrivingPackage } from "@/types/package";
 
 interface PackageModalProps {
   isOpen: boolean;
@@ -19,39 +18,27 @@ export function PackageModal({
   initialData,
   isLoading,
 }: PackageModalProps) {
-  const [formData, setFormData] = useState<CreatePackageInput>({
-    name: "",
-    price: 0,
-    hours: 0,
-    description: "",
-    warning: "",
-    isTestPackage: false,
-    active: true,
-  });
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        name: initialData.name,
-        price: initialData.price,
-        hours: initialData.hours,
-        description: initialData.description || "",
-        warning: initialData.warning || "",
-        isTestPackage: initialData.isTestPackage,
-        active: initialData.active,
-      });
-    } else {
-      setFormData({
-        name: "",
-        price: 0,
-        hours: 0,
-        description: "",
-        warning: "",
-        isTestPackage: false,
-        active: true,
-      });
-    }
-  }, [initialData, isOpen]);
+  const [formData, setFormData] = useState<CreatePackageInput>(() =>
+    initialData
+      ? {
+          name: initialData.name,
+          price: initialData.price,
+          hours: initialData.hours,
+          description: initialData.description || "",
+          warning: initialData.warning || "",
+          isTestPackage: initialData.isTestPackage,
+          active: initialData.active,
+        }
+      : {
+          name: "",
+          price: 0,
+          hours: 0,
+          description: "",
+          warning: "",
+          isTestPackage: false,
+          active: true,
+        }
+  );
 
   if (!isOpen) return null;
 
@@ -87,7 +74,7 @@ export function PackageModal({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[var(--primary)]"
+              className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-(--primary)"
               placeholder="e.g. 5 Hours Driving Lesson"
             />
           </div>
@@ -105,7 +92,7 @@ export function PackageModal({
                 onChange={(e) =>
                   setFormData({ ...formData, price: Number(e.target.value) })
                 }
-                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[var(--primary)]"
+                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-(--primary)"
               />
             </div>
             <div>
@@ -121,7 +108,7 @@ export function PackageModal({
                 onChange={(e) =>
                   setFormData({ ...formData, hours: Number(e.target.value) })
                 }
-                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[var(--primary)]"
+                className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-(--primary)"
               />
             </div>
           </div>
@@ -135,7 +122,7 @@ export function PackageModal({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[var(--primary)] h-24 resize-none"
+              className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-(--primary) h-24 resize-none"
               placeholder="Package details..."
             />
           </div>
@@ -150,7 +137,7 @@ export function PackageModal({
               onChange={(e) =>
                 setFormData({ ...formData, warning: e.target.value })
               }
-              className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[var(--primary)]"
+              className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-(--primary)"
               placeholder="Important notice for users..."
             />
           </div>
@@ -163,7 +150,7 @@ export function PackageModal({
                 onChange={(e) =>
                   setFormData({ ...formData, isTestPackage: e.target.checked })
                 }
-                className="w-4 h-4 rounded border-white/10 bg-black/50 text-[var(--primary)] focus:ring-[var(--primary)]"
+                className="w-4 h-4 rounded border-white/10 bg-black/50 text-(--primary) focus:ring-(--primary)"
               />
               <span className="text-sm text-white/80">Is Test Package?</span>
             </label>
@@ -175,7 +162,7 @@ export function PackageModal({
                 onChange={(e) =>
                   setFormData({ ...formData, active: e.target.checked })
                 }
-                className="w-4 h-4 rounded border-white/10 bg-black/50 text-[var(--primary)] focus:ring-[var(--primary)]"
+                className="w-4 h-4 rounded border-white/10 bg-black/50 text-(--primary) focus:ring-(--primary)"
               />
               <span className="text-sm text-white/80">Active</span>
             </label>
@@ -192,7 +179,7 @@ export function PackageModal({
             <button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-2 bg-[var(--primary)] text-black font-bold rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2 bg-(--primary) text-black font-bold rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
               {initialData ? "Update Package" : "Create Package"}

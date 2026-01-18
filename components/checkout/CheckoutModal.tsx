@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Check, AlertCircle, Loader2 } from "lucide-react";
-import { DrivingPackage } from "@/types/package";
+
 import { tierService } from "@/lib/services/tier-service";
 import { paymentService } from "@/lib/services/payment-service";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -20,7 +20,7 @@ export function CheckoutModal({
 }: CheckoutModalProps) {
   const { user } = useAuth();
   const [step, setStep] = useState<"details" | "payment" | "success">(
-    "details"
+    "details",
   );
   const [invitationCode, setInvitationCode] = useState("");
   const [validatingCode, setValidatingCode] = useState(false);
@@ -108,7 +108,7 @@ export function CheckoutModal({
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to submit payment. Please try again."
+          : "Failed to submit payment. Please try again.",
       );
     } finally {
       setSubmitting(false);
@@ -184,7 +184,7 @@ export function CheckoutModal({
                     <span>
                       -$
                       {((packageData.price * discount.percent) / 100).toFixed(
-                        2
+                        2,
                       )}
                     </span>
                   </div>

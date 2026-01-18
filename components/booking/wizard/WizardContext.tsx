@@ -10,15 +10,6 @@ import {
   bookAppointmentAction,
 } from "@/app/actions/calendar.action";
 import { getAdminSettings } from "@/app/actions/admin-settings.action";
-import { DrivingPackage } from "@/types/package";
-import {
-  WizardStep,
-  WizardContextType,
-  TimeSlot,
-  AdminSettings,
-  SelectedSlot,
-} from "./types";
-import { UserPackage } from "@/types/user-package";
 
 const WizardContext = createContext<WizardContextType | null>(null);
 
@@ -29,11 +20,6 @@ export const useWizard = () => {
   }
   return context;
 };
-
-interface WizardProviderProps {
-  children: React.ReactNode;
-  onSuccess?: () => void;
-}
 
 // Simple in-memory cache
 let cachedData: {
@@ -57,11 +43,11 @@ export const WizardProvider: React.FC<WizardProviderProps> = ({
 
   // Package state
   const [availablePackages, setAvailablePackages] = useState<DrivingPackage[]>(
-    cachedData.packages || []
+    cachedData.packages || [],
   );
   const [userPackages, setUserPackages] = useState<UserPackage[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<DrivingPackage | null>(
-    null
+    null,
   );
   const [useExistingPackage, setUseExistingPackage] = useState(false);
   const [selectedUserPackageId, setSelectedUserPackageId] = useState("");
@@ -76,7 +62,7 @@ export const WizardProvider: React.FC<WizardProviderProps> = ({
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [adminSettings, setAdminSettings] = useState<AdminSettings | null>(
-    cachedData.settings
+    cachedData.settings,
   );
 
   // Load package data
@@ -147,7 +133,7 @@ export const WizardProvider: React.FC<WizardProviderProps> = ({
       }
       return slots;
     },
-    []
+    [],
   );
 
   // Load availability
@@ -179,7 +165,7 @@ export const WizardProvider: React.FC<WizardProviderProps> = ({
 
         const availabilityResult = await checkAvailabilityAction(
           timeMin.toISOString(),
-          timeMax.toISOString()
+          timeMax.toISOString(),
         );
 
         if (availabilityResult.success && availabilityResult.data) {
@@ -197,7 +183,7 @@ export const WizardProvider: React.FC<WizardProviderProps> = ({
                 const busyStart = new Date(busy.start);
                 const busyEnd = new Date(busy.end);
                 return slotStart < busyEnd && slotEnd > busyStart;
-              }
+              },
             );
 
             return { ...slot, available: !isOverlapping };
@@ -212,7 +198,7 @@ export const WizardProvider: React.FC<WizardProviderProps> = ({
         setLoading(false);
       }
     },
-    [adminSettings, generateTimeSlots]
+    [adminSettings, generateTimeSlots],
   );
 
   // Actions

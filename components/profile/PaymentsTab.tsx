@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { Payment, CreatePaymentInput } from "@/types/payment";
+
 import { paymentService } from "@/lib/services/payment-service";
 import { Plus, AlertCircle } from "lucide-react";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";

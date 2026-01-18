@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Loader2, DollarSign, FileText, Package } from "lucide-react";
-import { CreatePaymentInput } from "@/types/payment";
-import { DrivingPackage } from "@/types/package";
+
 import { packageService } from "@/lib/services/package-service";
 import { useAuth } from "@/components/providers/AuthProvider";
 

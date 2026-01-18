@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Check, X, AlertCircle, Loader2 } from "lucide-react";
-import { Payment } from "@/types/payment";
+
 import { paymentService } from "@/lib/services/payment-service";
 
 interface AdminPaymentPanelProps {
@@ -29,7 +29,7 @@ export function AdminPaymentPanel({
   const handleStatusUpdate = async (
     id: string,
     status: "approved" | "rejected",
-    notes?: string
+    notes?: string,
   ) => {
     try {
       setProcessingId(id);
@@ -74,8 +74,8 @@ export function AdminPaymentPanel({
                     payment.status === "approved"
                       ? "bg-green-500/20 text-green-400 border-green-500/30"
                       : payment.status === "rejected"
-                      ? "bg-red-500/20 text-red-400 border-red-500/30"
-                      : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                        ? "bg-red-500/20 text-red-400 border-red-500/30"
+                        : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
                   }`}
                 >
                   {payment.status.toUpperCase()}

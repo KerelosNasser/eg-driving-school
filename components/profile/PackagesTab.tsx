@@ -12,8 +12,7 @@ import {
   Calendar,
   Clock,
 } from "lucide-react";
-import { DrivingPackage, CreatePackageInput } from "@/types/package";
-import { UserPackage } from "@/types/user-package";
+
 import { packageService } from "@/lib/services/package-service";
 import { userPackageService } from "@/lib/services/user-package-service";
 import { PackageModal } from "./PackageModal";
@@ -29,7 +28,7 @@ export function PackagesTab() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<DrivingPackage | null>(
-    null
+    null,
   );
   const [editingPackage, setEditingPackage] = useState<
     DrivingPackage | undefined

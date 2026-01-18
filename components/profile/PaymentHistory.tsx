@@ -1,6 +1,5 @@
 "use client";
 
-import { Payment } from "@/types/payment";
 import { Clock, CheckCircle, XCircle } from "lucide-react";
 
 interface PaymentHistoryProps {

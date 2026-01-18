@@ -8,7 +8,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/client";
-import { UserProfile } from "@/types/user";
+
 import { generateInvitationCode } from "@/lib/utils";
 
 interface AuthContextType {

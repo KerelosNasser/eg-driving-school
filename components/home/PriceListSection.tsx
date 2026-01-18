@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { ArrowRight, Loader2 } from "lucide-react";
 import { packageService } from "@/lib/services/package-service";
-import { DrivingPackage } from "@/types/package";
+
 import QuickBookWizard from "@/components/booking/QuickBookWizard";
 
 export default function PriceListSection() {
